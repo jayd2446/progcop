@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -103,6 +104,29 @@ namespace ProgCop
         internal UdpProcessRecord[] table;
     }
 
+    //Simple helper to get the process fullpath from pID
+    internal class MainModuleFilePath
+    {
+        internal static string GetPath(int pId)
+        {
+            string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + pId;
+
+            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+            {
+                using (var results = searcher.Get())
+                {
+                    ManagementObject mo = results.Cast<ManagementObject>().FirstOrDefault();
+                    if (mo != null)
+                    {
+                        return (string)mo["ExecutablePath"];
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
     // This class provides access an IPv4 TCP connection addresses and ports and its
     // associated Process IDs and names.
     [StructLayout(LayoutKind.Sequential)]
@@ -131,7 +155,7 @@ namespace ProgCop
             {
                 Process foundProcess = Process.GetProcessById(ProcessId);
                 ProcessName = foundProcess.ProcessName;
-                ProcessFullPath = foundProcess.MainModule.FileName;
+                ProcessFullPath = MainModuleFilePath.GetPath(pId);
             }
         }
     }
@@ -157,7 +181,7 @@ namespace ProgCop
             {
                 Process foundProcess = Process.GetProcessById(ProcessId);
                 ProcessName = foundProcess.ProcessName;
-                ProcessFullPath = foundProcess.MainModule.FileName;
+                ProcessFullPath = MainModuleFilePath.GetPath(pId);
             }
         }
     }

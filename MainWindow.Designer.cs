@@ -34,14 +34,21 @@
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.toolBar1 = new System.Windows.Forms.ToolBar();
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonBlockApplication = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonUnblockApplication = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
             this.statusBar1 = new System.Windows.Forms.StatusBar();
-            this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
             this.splitContainerListviews = new System.Windows.Forms.SplitContainer();
             this.listView1BlockedApplications = new System.Windows.Forms.ListView();
             this.listViewInternetConnectedProcesses = new System.Windows.Forms.ListView();
+            this.columnHeaderProcessName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLocalAddr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderRemote = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderLocalPort = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderRemotePort = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerListviews)).BeginInit();
             this.splitContainerListviews.Panel1.SuspendLayout();
             this.splitContainerListviews.Panel2.SuspendLayout();
@@ -62,6 +69,7 @@
             // 
             this.toolBar1.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
             this.toolBarButtonAddProg,
+            this.toolBarButtonDelProg,
             this.toolBarButtonSeparator,
             this.toolBarButtonBlockApplication,
             this.toolBarButtonUnblockApplication});
@@ -71,13 +79,25 @@
             this.toolBar1.Location = new System.Drawing.Point(0, 0);
             this.toolBar1.Name = "toolBar1";
             this.toolBar1.ShowToolTips = true;
-            this.toolBar1.Size = new System.Drawing.Size(694, 44);
+            this.toolBar1.Size = new System.Drawing.Size(770, 44);
             this.toolBar1.TabIndex = 1;
             // 
             // toolBarButtonAddProg
             // 
             this.toolBarButtonAddProg.ImageIndex = 0;
             this.toolBarButtonAddProg.Name = "toolBarButtonAddProg";
+            this.toolBarButtonAddProg.ToolTipText = "Add new rule";
+            // 
+            // toolBarButtonDelProg
+            // 
+            this.toolBarButtonDelProg.ImageIndex = 4;
+            this.toolBarButtonDelProg.Name = "toolBarButtonDelProg";
+            this.toolBarButtonDelProg.ToolTipText = "Delete rule";
+            // 
+            // toolBarButtonSeparator
+            // 
+            this.toolBarButtonSeparator.Name = "toolBarButtonSeparator";
+            this.toolBarButtonSeparator.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
             // 
             // toolBarButtonBlockApplication
             // 
@@ -99,20 +119,16 @@
             this.imageList1Toolbar.Images.SetKeyName(1, "firewall.png");
             this.imageList1Toolbar.Images.SetKeyName(2, "globe_africa.png");
             this.imageList1Toolbar.Images.SetKeyName(3, "setting_tools.png");
+            this.imageList1Toolbar.Images.SetKeyName(4, "application_delete.png");
             // 
             // statusBar1
             // 
             this.statusBar1.CausesValidation = false;
-            this.statusBar1.Location = new System.Drawing.Point(0, 612);
+            this.statusBar1.Location = new System.Drawing.Point(0, 631);
             this.statusBar1.Name = "statusBar1";
-            this.statusBar1.Size = new System.Drawing.Size(694, 22);
+            this.statusBar1.Size = new System.Drawing.Size(770, 22);
             this.statusBar1.TabIndex = 2;
             this.statusBar1.Text = "Ready";
-            // 
-            // toolBarButtonSeparator
-            // 
-            this.toolBarButtonSeparator.Name = "toolBarButtonSeparator";
-            this.toolBarButtonSeparator.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
             // 
             // splitContainerListviews
             // 
@@ -130,27 +146,32 @@
             // 
             this.splitContainerListviews.Panel2.Controls.Add(this.listViewInternetConnectedProcesses);
             this.splitContainerListviews.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
-            this.splitContainerListviews.Size = new System.Drawing.Size(694, 568);
-            this.splitContainerListviews.SplitterDistance = 231;
+            this.splitContainerListviews.Size = new System.Drawing.Size(770, 587);
+            this.splitContainerListviews.SplitterDistance = 238;
             this.splitContainerListviews.TabIndex = 3;
             // 
             // listView1BlockedApplications
             // 
-            this.listView1BlockedApplications.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listView1BlockedApplications.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1BlockedApplications.FullRowSelect = true;
             this.listView1BlockedApplications.HideSelection = false;
             this.listView1BlockedApplications.Location = new System.Drawing.Point(3, 0);
             this.listView1BlockedApplications.Name = "listView1BlockedApplications";
             this.listView1BlockedApplications.ShowGroups = false;
-            this.listView1BlockedApplications.Size = new System.Drawing.Size(688, 231);
+            this.listView1BlockedApplications.Size = new System.Drawing.Size(764, 238);
             this.listView1BlockedApplications.TabIndex = 0;
             this.listView1BlockedApplications.UseCompatibleStateImageBehavior = false;
             this.listView1BlockedApplications.View = System.Windows.Forms.View.Details;
             // 
             // listViewInternetConnectedProcesses
             // 
-            this.listViewInternetConnectedProcesses.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listViewInternetConnectedProcesses.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderProcessName,
+            this.columnHeaderLocalAddr,
+            this.columnHeaderRemote,
+            this.columnHeaderLocalPort,
+            this.columnHeaderRemotePort,
+            this.columnHeaderState});
             this.listViewInternetConnectedProcesses.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewInternetConnectedProcesses.FullRowSelect = true;
             this.listViewInternetConnectedProcesses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -158,17 +179,47 @@
             this.listViewInternetConnectedProcesses.Location = new System.Drawing.Point(3, 0);
             this.listViewInternetConnectedProcesses.Name = "listViewInternetConnectedProcesses";
             this.listViewInternetConnectedProcesses.ShowGroups = false;
-            this.listViewInternetConnectedProcesses.Size = new System.Drawing.Size(688, 333);
+            this.listViewInternetConnectedProcesses.Size = new System.Drawing.Size(764, 345);
             this.listViewInternetConnectedProcesses.TabIndex = 0;
             this.listViewInternetConnectedProcesses.UseCompatibleStateImageBehavior = false;
             this.listViewInternetConnectedProcesses.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderProcessName
+            // 
+            this.columnHeaderProcessName.Text = "Process name";
+            this.columnHeaderProcessName.Width = 250;
+            // 
+            // columnHeaderLocalAddr
+            // 
+            this.columnHeaderLocalAddr.Text = "Local";
+            this.columnHeaderLocalAddr.Width = 80;
+            // 
+            // columnHeaderRemote
+            // 
+            this.columnHeaderRemote.Text = "Remote";
+            this.columnHeaderRemote.Width = 80;
+            // 
+            // columnHeaderLocalPort
+            // 
+            this.columnHeaderLocalPort.Text = "Local port";
+            this.columnHeaderLocalPort.Width = 80;
+            // 
+            // columnHeaderRemotePort
+            // 
+            this.columnHeaderRemotePort.Text = "Remote port";
+            this.columnHeaderRemotePort.Width = 80;
+            // 
+            // columnHeaderState
+            // 
+            this.columnHeaderState.Text = "State";
+            this.columnHeaderState.Width = 100;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(694, 634);
+            this.ClientSize = new System.Drawing.Size(770, 653);
             this.Controls.Add(this.splitContainerListviews);
             this.Controls.Add(this.statusBar1);
             this.Controls.Add(this.toolBar1);
@@ -199,6 +250,13 @@
         private System.Windows.Forms.SplitContainer splitContainerListviews;
         private System.Windows.Forms.ListView listView1BlockedApplications;
         private System.Windows.Forms.ListView listViewInternetConnectedProcesses;
+        private System.Windows.Forms.ToolBarButton toolBarButtonDelProg;
+        private System.Windows.Forms.ColumnHeader columnHeaderProcessName;
+        private System.Windows.Forms.ColumnHeader columnHeaderLocalAddr;
+        private System.Windows.Forms.ColumnHeader columnHeaderRemote;
+        private System.Windows.Forms.ColumnHeader columnHeaderLocalPort;
+        private System.Windows.Forms.ColumnHeader columnHeaderRemotePort;
+        private System.Windows.Forms.ColumnHeader columnHeaderState;
     }
 }
 
