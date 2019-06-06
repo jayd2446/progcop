@@ -101,7 +101,7 @@ namespace ProgCop
     {
         internal uint dwNumEntries;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 1)]
-        internal UdpProcessRecord[] table;
+        internal MIB_UDPROW_OWNER_PID[] table;
     }
 
     //Simple helper to get the process fullpath from pID
@@ -125,6 +125,25 @@ namespace ProgCop
 
             return null;
         }
+
+        internal static string GetFilename(int pId)
+        {
+            string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + pId;
+
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(wmiQueryString))
+            {
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    ManagementObject mo = results.Cast<ManagementObject>().FirstOrDefault();
+                    if (mo != null)
+                    {
+                        return  System.IO.Path.GetFileName((string)mo["ExecutablePath"]);
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 
     // This class provides access an IPv4 TCP connection addresses and ports and its
@@ -140,6 +159,7 @@ namespace ProgCop
         internal int ProcessId { get; set; }
         internal string ProcessName { get; set; }
         internal string ProcessFullPath { get; set; }
+        internal string Protocol { get; set; }
 
         internal TcpProcessRecord(IPAddress localIp, IPAddress remoteIp, ushort localPort,
             ushort remotePort, int pId, MibTcpState state)
@@ -150,11 +170,16 @@ namespace ProgCop
             RemotePort = remotePort;
             State = state;
             ProcessId = pId;
+            Protocol = "TCP";
 
             if (Process.GetProcesses().Any(process => process.Id == pId))
             {
                 Process foundProcess = Process.GetProcessById(ProcessId);
-                ProcessName = foundProcess.ProcessName;
+                ProcessName = MainModuleFilePath.GetFilename(pId);
+
+                if (ProcessName == null)
+                    ProcessName = foundProcess.ProcessName;
+
                 ProcessFullPath = MainModuleFilePath.GetPath(pId);
             }
         }
@@ -170,17 +195,23 @@ namespace ProgCop
         internal int ProcessId { get; set; }
         internal string ProcessName { get; set; }
         internal string ProcessFullPath { get; set; }
+        internal string Protocol { get; set; }
 
         internal UdpProcessRecord(IPAddress localAddress, uint localPort, int pId)
         {
             LocalAddress = localAddress;
             LocalPort = localPort;
             ProcessId = pId;
+            Protocol = "UDP";
 
             if (Process.GetProcesses().Any(process => process.Id == pId))
             {
                 Process foundProcess = Process.GetProcessById(ProcessId);
-                ProcessName = foundProcess.ProcessName;
+                ProcessName = MainModuleFilePath.GetFilename(pId);
+
+                if (ProcessName == null)
+                    ProcessName = foundProcess.ProcessName;
+
                 ProcessFullPath = MainModuleFilePath.GetPath(pId);
             }
         }

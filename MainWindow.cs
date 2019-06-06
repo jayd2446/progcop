@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ProgCop
@@ -21,20 +22,45 @@ namespace ProgCop
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
 
             _lookup = new ConnectedProcessesLookup();
-
-            foreach(TcpProcessRecord record in _lookup.LookupForTcpConnectedProcesses())
-            {
-                ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
-                    record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString() });
-
-                listViewInternetConnectedProcesses.Items.Add(item);
-            }
-
-            
         }
 
-      
+        private void UpdateConnectedProcessesView()
+        {
+            listViewInternetConnectedProcesses.Items.Clear();
 
-     
+            List<TcpProcessRecord> tcpProcesses = _lookup.LookupForTcpConnectedProcesses();
+            List<UdpProcessRecord> udpProcesses = _lookup.LookupForUdpConnectedProcesses();
+
+            if(tcpProcesses != null)
+            {
+                foreach (TcpProcessRecord record in tcpProcesses)
+                {
+                    ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
+                                                                        record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString() });
+
+                    item.Tag = record.ProcessFullPath;
+                    listViewInternetConnectedProcesses.Items.Add(item);
+                }
+            }
+
+            if(udpProcesses != null)
+            {
+                foreach (UdpProcessRecord record in udpProcesses)
+                {
+                    ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), "",
+                                                                        record.LocalPort.ToString(), "", "" });
+
+                    item.Tag = record.ProcessFullPath;
+                    listViewInternetConnectedProcesses.Items.Add(item);
+                }
+            }
+        }
+
+        private void MainWindow_Shown(object sender, EventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            UpdateConnectedProcessesView();
+            Cursor = Cursors.Default;
+        }
     }
 }

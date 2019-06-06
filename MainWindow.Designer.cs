@@ -227,6 +227,7 @@
             this.Menu = this.mainMenu1;
             this.Name = "MainWindow";
             this.Text = "ProgCop";
+            this.Shown += new System.EventHandler(this.MainWindow_Shown);
             this.splitContainerListviews.Panel1.ResumeLayout(false);
             this.splitContainerListviews.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerListviews)).EndInit();
