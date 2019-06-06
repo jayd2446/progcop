@@ -111,9 +111,9 @@ namespace ProgCop
         {
             string wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + pId;
 
-            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(wmiQueryString))
             {
-                using (var results = searcher.Get())
+                using (ManagementObjectCollection results = searcher.Get())
                 {
                     ManagementObject mo = results.Cast<ManagementObject>().FirstOrDefault();
                     if (mo != null)
