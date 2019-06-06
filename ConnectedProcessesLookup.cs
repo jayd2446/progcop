@@ -259,14 +259,14 @@ namespace ProgCop
 
                     activeUdpConnections.Add(new UdpProcessRecord(new IPAddress(udpRow.localAddr),
                                              BitConverter.ToUInt16(new byte[2] { udpRow.localPort[1], udpRow.localPort[0] }, 0), udpRow.owningPid));
-                                             tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(udpRow));
+
+                    tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(udpRow));
                 }
             }
           
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                MessageBox.Show(exception.Message, "Exception",
-                    MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(ex.Message, "ProgCop error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
