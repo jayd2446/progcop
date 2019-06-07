@@ -175,8 +175,8 @@ namespace ProgCop
             //Process.GetProcessById(pId);
 
             //ProcessName = MainModuleFilePath.GetFilename(pId);
-            if (ProcessName == null)
-                ProcessName = Process.GetProcessById(pId).ProcessName;
+            
+            ProcessName = Process.GetProcessById(pId).ProcessName;
             //ProcessFullPath = MainModuleFilePath.GetPath(pId);
 
             //foreach (Process p in Process.GetProcesses())
@@ -213,8 +213,8 @@ namespace ProgCop
             Protocol = "UDP";
 
             //ProcessName = MainModuleFilePath.GetFilename(pId);
-            if (ProcessName == null)
-                ProcessName = Process.GetProcessById(pId).ProcessName;
+            
+            ProcessName = Process.GetProcessById(pId).ProcessName;
             //ProcessFullPath = MainModuleFilePath.GetPath(pId);
         }
     }
