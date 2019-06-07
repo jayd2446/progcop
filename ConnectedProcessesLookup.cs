@@ -172,16 +172,24 @@ namespace ProgCop
             ProcessId = pId;
             Protocol = "TCP";
 
-            if (Process.GetProcesses().Any(process => process.Id == pId))
-            {
-                Process foundProcess = Process.GetProcessById(ProcessId);
-                ProcessName = MainModuleFilePath.GetFilename(pId);
+            //Process.GetProcessById(pId);
 
-                if (ProcessName == null)
-                    ProcessName = foundProcess.ProcessName;
+            //ProcessName = MainModuleFilePath.GetFilename(pId);
+            if (ProcessName == null)
+                ProcessName = Process.GetProcessById(pId).ProcessName;
+            //ProcessFullPath = MainModuleFilePath.GetPath(pId);
 
-                ProcessFullPath = MainModuleFilePath.GetPath(pId);
-            }
+            //foreach (Process p in Process.GetProcesses())
+            //{
+            /* if (p.Id == pId)
+             {
+                 ProcessName = MainModuleFilePath.GetFilename(pId);
+                 if (ProcessName == null)
+                     ProcessName = p.ProcessName;
+                 ProcessFullPath = MainModuleFilePath.GetPath(pId);
+                 break;
+             }*/
+            //}
         }
     }
 
@@ -204,16 +212,10 @@ namespace ProgCop
             ProcessId = pId;
             Protocol = "UDP";
 
-            if (Process.GetProcesses().Any(process => process.Id == pId))
-            {
-                Process foundProcess = Process.GetProcessById(ProcessId);
-                ProcessName = MainModuleFilePath.GetFilename(pId);
-
-                if (ProcessName == null)
-                    ProcessName = foundProcess.ProcessName;
-
-                ProcessFullPath = MainModuleFilePath.GetPath(pId);
-            }
+            //ProcessName = MainModuleFilePath.GetFilename(pId);
+            if (ProcessName == null)
+                ProcessName = Process.GetProcessById(pId).ProcessName;
+            //ProcessFullPath = MainModuleFilePath.GetPath(pId);
         }
     }
 
@@ -231,8 +233,7 @@ namespace ProgCop
         private static extern uint GetExtendedUdpTable(IntPtr pUdpTable, ref int pdwSize, bool bOrder, 
                                                                          int ulAf, UdpTableClass tableClass, uint reserved = 0);
 
-        //TODO: Do we need to have view for Tcp and Udp separately or should we just combine the lists into one list?
-        internal List<TcpProcessRecord> LookupForTcpConnectedProcesses()
+        internal List<TcpProcessRecord> LookupForTcpConnectedProcesses(ProgressBar progress)
         {
             List<TcpProcessRecord> activeTcpConnections = new List<TcpProcessRecord>();
             int bufferSize = 0;
@@ -258,15 +259,23 @@ namespace ProgCop
                 MIB_TCPTABLE_OWNER_PID tcpRecordsTable = (MIB_TCPTABLE_OWNER_PID)Marshal.PtrToStructure(tcpTableRecordsPtr, typeof(MIB_TCPTABLE_OWNER_PID));
                 IntPtr tableRowPtr = (IntPtr)((long)tcpTableRecordsPtr + Marshal.SizeOf(tcpRecordsTable.dwNumEntries));
 
+                progress.Maximum = (int)tcpRecordsTable.dwNumEntries;
+                progress.Step = 1;
+                progress.Value = 0;
+
                 for (int row = 0; row < tcpRecordsTable.dwNumEntries; row++)
                 {
                     MIB_TCPROW_OWNER_PID tcpRow = (MIB_TCPROW_OWNER_PID)Marshal.PtrToStructure(tableRowPtr, typeof(MIB_TCPROW_OWNER_PID));
 
-                    activeTcpConnections.Add(new TcpProcessRecord(new IPAddress(tcpRow.localAddr), new IPAddress(tcpRow.remoteAddr),
-                                              BitConverter.ToUInt16(new byte[2] {tcpRow.localPort[1], tcpRow.localPort[0] }, 0),
-                                              BitConverter.ToUInt16(new byte[2] {tcpRow.remotePort[1],tcpRow.remotePort[0] }, 0), tcpRow.owningPid, tcpRow.state));
+                    TcpProcessRecord record = new TcpProcessRecord(new IPAddress(tcpRow.localAddr), new IPAddress(tcpRow.remoteAddr),
+                                              BitConverter.ToUInt16(new byte[2] { tcpRow.localPort[1], tcpRow.localPort[0] }, 0),
+                                              BitConverter.ToUInt16(new byte[2] { tcpRow.remotePort[1], tcpRow.remotePort[0] }, 0), tcpRow.owningPid, tcpRow.state);
 
                     tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(tcpRow));
+
+                    activeTcpConnections.Add(record);
+                    progress.Value++;
+                    Application.DoEvents();
                 }
             }
             catch(Exception ex)
@@ -281,11 +290,10 @@ namespace ProgCop
             return activeTcpConnections?.Distinct().ToList<TcpProcessRecord>();
         }
 
-        internal List<UdpProcessRecord> LookupForUdpConnectedProcesses()
+        internal List<UdpProcessRecord> LookupForUdpConnectedProcesses(ProgressBar progress)
         {
             int bufferSize = 0;
             List<UdpProcessRecord> activeUdpConnections = new List<UdpProcessRecord>();
-
             // Getting the size of UDP table, that is returned in 'bufferSize' variable.
             uint result = GetExtendedUdpTable(IntPtr.Zero, ref bufferSize, true, AF_INET, UdpTableClass.UDP_TABLE_OWNER_PID);
             IntPtr udpTableRecordPtr = Marshal.AllocHGlobal(bufferSize);
@@ -306,16 +314,24 @@ namespace ProgCop
                 MIB_UDPTABLE_OWNER_PID udpRecordsTable = (MIB_UDPTABLE_OWNER_PID)Marshal.PtrToStructure(udpTableRecordPtr, typeof(MIB_UDPTABLE_OWNER_PID));
                 IntPtr tableRowPtr = (IntPtr)((long)udpTableRecordPtr + Marshal.SizeOf(udpRecordsTable.dwNumEntries));
 
+                //As Udp processes are fetched after tcp ones we just increase the progress bar maximum value
+                //to include udp entries too.
+                progress.Maximum = progress.Maximum + (int)udpRecordsTable.dwNumEntries;
+                progress.Step = 1;
+                
                 // Reading and parsing the UDP records one by one from the table and
                 // storing them in a list of 'UdpProcessRecord' structure type objects.
                 for (int i = 0; i < udpRecordsTable.dwNumEntries; i++)
                 {
                     MIB_UDPROW_OWNER_PID udpRow = (MIB_UDPROW_OWNER_PID)Marshal.PtrToStructure(tableRowPtr, typeof(MIB_UDPROW_OWNER_PID));
 
-                    activeUdpConnections.Add(new UdpProcessRecord(new IPAddress(udpRow.localAddr),
-                                             BitConverter.ToUInt16(new byte[2] { udpRow.localPort[1], udpRow.localPort[0] }, 0), udpRow.owningPid));
-
+                    UdpProcessRecord record = new UdpProcessRecord(new IPAddress(udpRow.localAddr),
+                                                                  BitConverter.ToUInt16(new byte[2] { udpRow.localPort[1], udpRow.localPort[0] }, 0), 
+                                                                  udpRow.owningPid);
                     tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(udpRow));
+                    activeUdpConnections.Add(record);
+                    progress.Value++;
+                    Application.DoEvents();
                 }
             }
           

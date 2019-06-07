@@ -24,43 +24,63 @@ namespace ProgCop
             _lookup = new ConnectedProcessesLookup();
         }
 
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            UpdateConnectedProcessesView();
+        }
+
         private void UpdateConnectedProcessesView()
         {
             listViewInternetConnectedProcesses.Items.Clear();
+            toolBarButtonRefreshConnected.Enabled = false;
+            progressBarConnectedItems.Visible = true;
 
-            List<TcpProcessRecord> tcpProcesses = _lookup.LookupForTcpConnectedProcesses();
-            List<UdpProcessRecord> udpProcesses = _lookup.LookupForUdpConnectedProcesses();
+            List<TcpProcessRecord> tcpRecords = _lookup.LookupForTcpConnectedProcesses(progressBarConnectedItems);
+            List<UdpProcessRecord> udpRecords = _lookup.LookupForUdpConnectedProcesses(progressBarConnectedItems);
 
-            if(tcpProcesses != null)
+            foreach(TcpProcessRecord record in tcpRecords)
             {
-                foreach (TcpProcessRecord record in tcpProcesses)
-                {
-                    ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
-                                                                        record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString() });
-
-                    item.Tag = record.ProcessFullPath;
-                    listViewInternetConnectedProcesses.Items.Add(item);
-                }
+                ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
+                record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString(), record.Protocol });
+                item.Tag = record.ProcessFullPath;
+                listViewInternetConnectedProcesses.Items.Add(item);
             }
 
-            if(udpProcesses != null)
+            foreach (UdpProcessRecord record in udpRecords)
             {
-                foreach (UdpProcessRecord record in udpProcesses)
-                {
-                    ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), "",
-                                                                        record.LocalPort.ToString(), "", "" });
-
-                    item.Tag = record.ProcessFullPath;
-                    listViewInternetConnectedProcesses.Items.Add(item);
-                }
+                ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), "",
+                record.LocalPort.ToString(), "", "", record.Protocol });
+                item.Tag = record.ProcessFullPath;
+                listViewInternetConnectedProcesses.Items.Add(item);
             }
+
+            progressBarConnectedItems.Visible = false;
+            toolBarButtonRefreshConnected.Enabled = true;
         }
 
         private void MainWindow_Shown(object sender, EventArgs e)
         {
-            Cursor = Cursors.WaitCursor;
             UpdateConnectedProcessesView();
-            Cursor = Cursors.Default;
+        }
+
+        private void ToolBar1_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
+        {
+            switch(e.Button.Name)
+            {
+                case "toolBarButtonAddProg":
+                    break;
+                case "toolBarButtonDelProg":
+                    break;
+                case "toolBarButtonBlockApplication":
+                    break;
+                case "toolBarButtonUnblockApplication":
+                    break;
+                case "toolBarButtonRefreshConnected":
+                    UpdateConnectedProcessesView();
+                    break;
+                    
+
+            }
         }
     }
 }
