@@ -58,6 +58,9 @@ namespace ProgCop
             toolBarButtonRefreshConnected.Enabled = true;
             listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
             listViewInternetConnectedProcesses.Sort();
+
+            //For some reason after calling Sort() for the listview, we need to set the native theme again
+            SetWindowTheme(listViewInternetConnectedProcesses.Handle, "explorer", null);
         }
 
         private void MainWindow_Shown(object sender, EventArgs e)
