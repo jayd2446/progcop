@@ -105,7 +105,7 @@ namespace ProgCop
     }
 
     //Simple helper to get the process fullpath from pID
-    internal class MainModuleFilePath
+    internal class ProcessMainModuleFilePath
     {
         internal static string GetPath(int pId)
         {
@@ -171,25 +171,7 @@ namespace ProgCop
             State = state;
             ProcessId = pId;
             Protocol = "TCP";
-
-            //Process.GetProcessById(pId);
-
-            //ProcessName = MainModuleFilePath.GetFilename(pId);
-            
             ProcessName = Process.GetProcessById(pId).ProcessName;
-            //ProcessFullPath = MainModuleFilePath.GetPath(pId);
-
-            //foreach (Process p in Process.GetProcesses())
-            //{
-            /* if (p.Id == pId)
-             {
-                 ProcessName = MainModuleFilePath.GetFilename(pId);
-                 if (ProcessName == null)
-                     ProcessName = p.ProcessName;
-                 ProcessFullPath = MainModuleFilePath.GetPath(pId);
-                 break;
-             }*/
-            //}
         }
     }
 
@@ -211,11 +193,7 @@ namespace ProgCop
             LocalPort = localPort;
             ProcessId = pId;
             Protocol = "UDP";
-
-            //ProcessName = MainModuleFilePath.GetFilename(pId);
-            
             ProcessName = Process.GetProcessById(pId).ProcessName;
-            //ProcessFullPath = MainModuleFilePath.GetPath(pId);
         }
     }
 
@@ -324,7 +302,6 @@ namespace ProgCop
                 for (int i = 0; i < udpRecordsTable.dwNumEntries; i++)
                 {
                     MIB_UDPROW_OWNER_PID udpRow = (MIB_UDPROW_OWNER_PID)Marshal.PtrToStructure(tableRowPtr, typeof(MIB_UDPROW_OWNER_PID));
-
                     UdpProcessRecord record = new UdpProcessRecord(new IPAddress(udpRow.localAddr),
                                                                   BitConverter.ToUInt16(new byte[2] { udpRow.localPort[1], udpRow.localPort[0] }, 0), 
                                                                   udpRow.owningPid);

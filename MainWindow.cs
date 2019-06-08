@@ -56,6 +56,8 @@ namespace ProgCop
 
             progressBarConnectedItems.Visible = false;
             toolBarButtonRefreshConnected.Enabled = true;
+            listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
+            listViewInternetConnectedProcesses.Sort();
         }
 
         private void MainWindow_Shown(object sender, EventArgs e)
@@ -71,16 +73,27 @@ namespace ProgCop
                     break;
                 case "toolBarButtonDelProg":
                     break;
-                case "toolBarButtonBlockApplication":
-                    break;
-                case "toolBarButtonUnblockApplication":
+                case "toolBarButtonSettings":
                     break;
                 case "toolBarButtonRefreshConnected":
                     UpdateConnectedProcessesView();
                     break;
-                    
-
             }
+        }
+
+        private void MenuItemContextBlock_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MenuItemUnblock_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MenuItemOpenFileLocation_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
