@@ -36,7 +36,6 @@
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
-            this.toolBarButtonRefreshConnected = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSettings = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
             this.statusBar1 = new System.Windows.Forms.StatusBar();
@@ -50,14 +49,14 @@
             this.columnHeaderLocalPort = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderRemotePort = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderProtocol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.progressBarConnectedItems = new System.Windows.Forms.ProgressBar();
             this.contextMenuConnectedItems = new System.Windows.Forms.ContextMenu();
             this.menuItemContextBlock = new System.Windows.Forms.MenuItem();
-            this.menuItemUnblock = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
-            this.menuItemOpenFileLocation = new System.Windows.Forms.MenuItem();
+            this.menuItemContextOpenFileLocation = new System.Windows.Forms.MenuItem();
+            this.contextMenuBlockedApplications = new System.Windows.Forms.ContextMenu();
+            this.menuItemContextUnblock = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -80,7 +79,6 @@
             this.toolBarButtonAddProg,
             this.toolBarButtonDelProg,
             this.toolBarButtonSeparator,
-            this.toolBarButtonRefreshConnected,
             this.toolBarButtonSettings});
             this.toolBar1.ButtonSize = new System.Drawing.Size(32, 32);
             this.toolBar1.DropDownArrows = true;
@@ -109,12 +107,6 @@
             this.toolBarButtonSeparator.Name = "toolBarButtonSeparator";
             this.toolBarButtonSeparator.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
             // 
-            // toolBarButtonRefreshConnected
-            // 
-            this.toolBarButtonRefreshConnected.ImageIndex = 3;
-            this.toolBarButtonRefreshConnected.Name = "toolBarButtonRefreshConnected";
-            this.toolBarButtonRefreshConnected.ToolTipText = "Refresh process list";
-            // 
             // toolBarButtonSettings
             // 
             this.toolBarButtonSettings.ImageIndex = 1;
@@ -128,7 +120,6 @@
             this.imageList1Toolbar.Images.SetKeyName(0, "application_add.png");
             this.imageList1Toolbar.Images.SetKeyName(1, "setting_tools.png");
             this.imageList1Toolbar.Images.SetKeyName(2, "application_delete.png");
-            this.imageList1Toolbar.Images.SetKeyName(3, "arrow_refresh.png");
             // 
             // statusBar1
             // 
@@ -150,12 +141,14 @@
             this.listView1BlockedApplications.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1BlockedApplications.HideSelection = false;
             this.listView1BlockedApplications.Location = new System.Drawing.Point(0, 0);
+            this.listView1BlockedApplications.MultiSelect = false;
             this.listView1BlockedApplications.Name = "listView1BlockedApplications";
             this.listView1BlockedApplications.ShowGroups = false;
             this.listView1BlockedApplications.Size = new System.Drawing.Size(716, 243);
             this.listView1BlockedApplications.TabIndex = 0;
             this.listView1BlockedApplications.UseCompatibleStateImageBehavior = false;
             this.listView1BlockedApplications.View = System.Windows.Forms.View.Details;
+            this.listView1BlockedApplications.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListView1BlockedApplications_MouseClick);
             // 
             // columnHeaderBlockedApplicationName
             // 
@@ -177,7 +170,7 @@
             this.columnHeaderLocalPort,
             this.columnHeaderRemotePort,
             this.columnHeaderState,
-            this.columnHeaderProtocol});
+            this.columnHeaderPID});
             this.listViewInternetConnectedProcesses.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewInternetConnectedProcesses.FullRowSelect = true;
             this.listViewInternetConnectedProcesses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -189,6 +182,7 @@
             this.listViewInternetConnectedProcesses.TabIndex = 0;
             this.listViewInternetConnectedProcesses.UseCompatibleStateImageBehavior = false;
             this.listViewInternetConnectedProcesses.View = System.Windows.Forms.View.Details;
+            this.listViewInternetConnectedProcesses.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListViewInternetConnectedProcesses_MouseClick);
             // 
             // columnHeaderProcessName
             // 
@@ -220,9 +214,9 @@
             this.columnHeaderState.Text = "State";
             this.columnHeaderState.Width = 90;
             // 
-            // columnHeaderProtocol
+            // columnHeaderPID
             // 
-            this.columnHeaderProtocol.Text = "Protocol";
+            this.columnHeaderPID.Text = "PID";
             // 
             // splitContainer1
             // 
@@ -237,28 +231,17 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.progressBarConnectedItems);
             this.splitContainer1.Panel2.Controls.Add(this.listViewInternetConnectedProcesses);
             this.splitContainer1.Size = new System.Drawing.Size(716, 718);
             this.splitContainer1.SplitterDistance = 243;
             this.splitContainer1.TabIndex = 3;
             // 
-            // progressBarConnectedItems
-            // 
-            this.progressBarConnectedItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarConnectedItems.Location = new System.Drawing.Point(116, 138);
-            this.progressBarConnectedItems.Name = "progressBarConnectedItems";
-            this.progressBarConnectedItems.Size = new System.Drawing.Size(480, 23);
-            this.progressBarConnectedItems.TabIndex = 1;
-            // 
             // contextMenuConnectedItems
             // 
             this.contextMenuConnectedItems.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemContextBlock,
-            this.menuItemUnblock,
             this.menuItem4,
-            this.menuItemOpenFileLocation});
+            this.menuItemContextOpenFileLocation});
             // 
             // menuItemContextBlock
             // 
@@ -266,22 +249,27 @@
             this.menuItemContextBlock.Text = "Block";
             this.menuItemContextBlock.Click += new System.EventHandler(this.MenuItemContextBlock_Click);
             // 
-            // menuItemUnblock
-            // 
-            this.menuItemUnblock.Index = 1;
-            this.menuItemUnblock.Text = "Unblock";
-            this.menuItemUnblock.Click += new System.EventHandler(this.MenuItemUnblock_Click);
-            // 
             // menuItem4
             // 
-            this.menuItem4.Index = 2;
+            this.menuItem4.Index = 1;
             this.menuItem4.Text = "-";
             // 
-            // menuItemOpenFileLocation
+            // menuItemContextOpenFileLocation
             // 
-            this.menuItemOpenFileLocation.Index = 3;
-            this.menuItemOpenFileLocation.Text = "Open file location";
-            this.menuItemOpenFileLocation.Click += new System.EventHandler(this.MenuItemOpenFileLocation_Click);
+            this.menuItemContextOpenFileLocation.Index = 2;
+            this.menuItemContextOpenFileLocation.Text = "Open file location";
+            this.menuItemContextOpenFileLocation.Click += new System.EventHandler(this.MenuItemContextOpenFileLocation_Click);
+            // 
+            // contextMenuBlockedApplications
+            // 
+            this.contextMenuBlockedApplications.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemContextUnblock});
+            // 
+            // menuItemContextUnblock
+            // 
+            this.menuItemContextUnblock.Index = 0;
+            this.menuItemContextUnblock.Text = "Unblock";
+            this.menuItemContextUnblock.Click += new System.EventHandler(this.MenuItemContextUnblock_Click);
             // 
             // MainWindow
             // 
@@ -325,17 +313,16 @@
         private System.Windows.Forms.ColumnHeader columnHeaderRemotePort;
         private System.Windows.Forms.ColumnHeader columnHeaderState;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ProgressBar progressBarConnectedItems;
-        private System.Windows.Forms.ToolBarButton toolBarButtonRefreshConnected;
-        private System.Windows.Forms.ColumnHeader columnHeaderProtocol;
+        private System.Windows.Forms.ColumnHeader columnHeaderPID;
         private System.Windows.Forms.ContextMenu contextMenuConnectedItems;
         private System.Windows.Forms.MenuItem menuItemContextBlock;
-        private System.Windows.Forms.MenuItem menuItemUnblock;
         private System.Windows.Forms.MenuItem menuItem4;
-        private System.Windows.Forms.MenuItem menuItemOpenFileLocation;
+        private System.Windows.Forms.MenuItem menuItemContextOpenFileLocation;
         private System.Windows.Forms.ColumnHeader columnHeaderBlockedApplicationName;
         private System.Windows.Forms.ColumnHeader columnHeaderBlockedState;
         private System.Windows.Forms.ToolBarButton toolBarButtonSettings;
+        private System.Windows.Forms.ContextMenu contextMenuBlockedApplications;
+        private System.Windows.Forms.MenuItem menuItemContextUnblock;
     }
 }
 

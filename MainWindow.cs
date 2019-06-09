@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
+using System.Threading;
+using WindowsFirewallHelper;
+using WindowsFirewallHelper.FirewallAPIv2.Rules;
 
 namespace ProgCop
 {
@@ -12,45 +15,57 @@ namespace ProgCop
         [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
         public static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
 
-        private ConnectedProcessesLookup _lookup;
-        private Timer _timer;
+        private System.Windows.Forms.Timer _timer;
 
         internal MainWindow()
         {
             InitializeComponent();
 
             Font = SystemFonts.MessageBoxFont;
-            SetWindowTheme(listViewInternetConnectedProcesses.Handle, "explorer", null);
+            
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
 
-            _lookup = new ConnectedProcessesLookup();
-            _timer = new Timer();
+            _timer = new System.Windows.Forms.Timer();
             _timer.Interval = 5000;
             _timer.Tick += _timer_Tick1;
             _timer.Start();
         }
 
-        private void _timer_Tick1(object sender, EventArgs e)
+        delegate void UpdateViewCallback(ListView view);
+        private void UpdateListViewSafely(ListView view)
         {
-            listViewInternetConnectedProcesses.BeginUpdate();
-            List<TcpProcessRecord> recordsTcpNew = _lookup.LookupForTcpConnectedProcesses(progressBarConnectedItems);
-           
+            List<TcpProcessRecord> recordsTcpNew = new ConnectedProcessesLookup().LookupForTcpConnectedProcesses();
+            List<UdpProcessRecord> recordsUdpNew = new ConnectedProcessesLookup().LookupForUdpConnectedProcesses();
+
             foreach (TcpProcessRecord record in recordsTcpNew)
             {
-                if (!listViewInternetConnectedProcesses.Items.ContainsKey(record.ProcessId.ToString()))
+                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
                 {
                     ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
                                                                            record.RemoteAddress.ToString(), record.LocalPort.ToString(),
                                                                            record.RemotePort.ToString(), record.State.ToString(),
-                                                                           record.Protocol });
+                                                                           record.ProcessId.ToString() });
                     itemNew.Tag = record.ProcessId;
                     itemNew.Name = record.ProcessId.ToString();
-                    listViewInternetConnectedProcesses.Items.Add(itemNew);
+                    view.Items.Add(itemNew);
                 }
-
             }
 
-            foreach (ListViewItem item in listViewInternetConnectedProcesses.Items)
+            foreach (UdpProcessRecord record in recordsUdpNew)
+            {
+                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
+                {
+                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
+                                                                           "", record.LocalPort.ToString(),
+                                                                           "", "",
+                                                                           record.ProcessId.ToString() });
+                    itemNew.Tag = record.ProcessId;
+                    itemNew.Name = record.ProcessId.ToString();
+                    view.Items.Add(itemNew);
+                }
+            }
+
+            foreach (ListViewItem item in view.Items)
             {
                 bool found = false;
                 foreach (TcpProcessRecord record in recordsTcpNew)
@@ -61,53 +76,34 @@ namespace ProgCop
                         break;
                     }
                 }
-                if(found == false)
+                if (found == false)
                 {
-                    listViewInternetConnectedProcesses.Items.Remove(item);
+                    view.Items.Remove(item);
                 }
             }
-            listViewInternetConnectedProcesses.EndUpdate();
+
+           
+
+            view.Sorting = SortOrder.Ascending;
+            view.Sort();
+            //Need to reset the native theme everytime after calling .sort()
+            SetWindowTheme(view.Handle, "explorer", null);
         }
 
-        private void UpdateConnectedProcessesView()
+        internal void RefreshProcesses()
         {
-            listViewInternetConnectedProcesses.Items.Clear();
-            toolBarButtonRefreshConnected.Enabled = false;
-            progressBarConnectedItems.Visible = true;
+            UpdateViewCallback d = new UpdateViewCallback(UpdateListViewSafely);
+            Invoke(d, new object[] { listViewInternetConnectedProcesses});
+        }
 
-            List<TcpProcessRecord> tcpRecords = _lookup.LookupForTcpConnectedProcesses(progressBarConnectedItems);
-            List<UdpProcessRecord> udpRecords = _lookup.LookupForUdpConnectedProcesses(progressBarConnectedItems);
-
-            foreach(TcpProcessRecord record in tcpRecords)
-            {
-                ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
-                record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString(), record.Protocol });
-                item.Tag = record.ProcessId;
-                item.Name = record.ProcessId.ToString();
-                listViewInternetConnectedProcesses.Items.Add(item);
-            }
-
-            foreach (UdpProcessRecord record in udpRecords)
-            {
-                ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), "",
-                record.LocalPort.ToString(), "", "", record.Protocol });
-                item.Tag = record.ProcessId;
-                item.Name = record.ProcessId.ToString();
-                listViewInternetConnectedProcesses.Items.Add(item);
-            }
-
-            progressBarConnectedItems.Visible = false;
-            toolBarButtonRefreshConnected.Enabled = true;
-            listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
-            listViewInternetConnectedProcesses.Sort();
-
-            //For some reason after calling Sort() for the listview, we need to set the native theme again
-            SetWindowTheme(listViewInternetConnectedProcesses.Handle, "explorer", null);
+        private void _timer_Tick1(object sender, EventArgs e)
+        {
+            RefreshProcesses();
         }
 
         private void MainWindow_Shown(object sender, EventArgs e)
         {
-            UpdateConnectedProcessesView();
+            RefreshProcesses();
         }
 
         private void ToolBar1_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
@@ -120,25 +116,65 @@ namespace ProgCop
                     break;
                 case "toolBarButtonSettings":
                     break;
-                case "toolBarButtonRefreshConnected":
-                    UpdateConnectedProcessesView();
-                    break;
             }
         }
 
         private void MenuItemContextBlock_Click(object sender, EventArgs e)
         {
+            int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
+            string path = ProcessMainModuleFilePath.GetPath(pid);
+
+            if(path == null)
+            {
+                MessageBox.Show("Can't find path for the process. Probably an internal Windows process.");
+                return;
+            }
+
+            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
+                                                                      @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
+                                                                      FirewallAction.Block, path); ;
+
+            rule.Direction = FirewallDirection.Outbound;
+            rule.Protocol = FirewallProtocol.Any;
+
+           
+
+            FirewallManager.Instance.Rules.Add(rule);
+
+            ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
+            itemNew.Tag = rule;
+            listView1BlockedApplications.Items.Add(itemNew);
 
         }
 
-        private void MenuItemUnblock_Click(object sender, EventArgs e)
+        private void MenuItemContextOpenFileLocation_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void MenuItemOpenFileLocation_Click(object sender, EventArgs e)
+        //TODO: These need error handling
+        private void ListViewInternetConnectedProcesses_MouseClick(object sender, MouseEventArgs e)
         {
+            if(e.Button == MouseButtons.Right)
+                if(listViewInternetConnectedProcesses.FocusedItem.Bounds.Contains(e.Location))
+                    contextMenuConnectedItems.Show(listViewInternetConnectedProcesses, e.Location);
+        }
 
+        private void MenuItemContextUnblock_Click(object sender, EventArgs e)
+        {
+            ListViewItem item = listView1BlockedApplications.SelectedItems[0];
+            var rule = (IRule)item.Tag;
+            var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+
+            FirewallManager.Instance.Rules.Remove(theRule);
+            listView1BlockedApplications.Items.Remove(item);
+        }
+
+        private void ListView1BlockedApplications_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                if (listView1BlockedApplications.FocusedItem.Bounds.Contains(e.Location))
+                    contextMenuBlockedApplications.Show(listView1BlockedApplications, e.Location);
         }
     }
 }

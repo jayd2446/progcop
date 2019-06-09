@@ -211,7 +211,7 @@ namespace ProgCop
         private static extern uint GetExtendedUdpTable(IntPtr pUdpTable, ref int pdwSize, bool bOrder, 
                                                                          int ulAf, UdpTableClass tableClass, uint reserved = 0);
 
-        internal List<TcpProcessRecord> LookupForTcpConnectedProcesses(ProgressBar progress)
+        internal List<TcpProcessRecord> LookupForTcpConnectedProcesses()
         {
             List<TcpProcessRecord> activeTcpConnections = new List<TcpProcessRecord>();
             int bufferSize = 0;
@@ -237,10 +237,6 @@ namespace ProgCop
                 MIB_TCPTABLE_OWNER_PID tcpRecordsTable = (MIB_TCPTABLE_OWNER_PID)Marshal.PtrToStructure(tcpTableRecordsPtr, typeof(MIB_TCPTABLE_OWNER_PID));
                 IntPtr tableRowPtr = (IntPtr)((long)tcpTableRecordsPtr + Marshal.SizeOf(tcpRecordsTable.dwNumEntries));
 
-                progress.Maximum = (int)tcpRecordsTable.dwNumEntries;
-                progress.Step = 1;
-                progress.Value = 0;
-
                 for (int row = 0; row < tcpRecordsTable.dwNumEntries; row++)
                 {
                     MIB_TCPROW_OWNER_PID tcpRow = (MIB_TCPROW_OWNER_PID)Marshal.PtrToStructure(tableRowPtr, typeof(MIB_TCPROW_OWNER_PID));
@@ -252,13 +248,11 @@ namespace ProgCop
                     tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(tcpRow));
                     
                     activeTcpConnections.Add(record);
-                    progress.Value++;
-                    Application.DoEvents();
                 }
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message, "ProgCop error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //TODO: Write to the system log
             }
             finally
             {
@@ -268,7 +262,7 @@ namespace ProgCop
             return activeTcpConnections?.Distinct().ToList<TcpProcessRecord>();
         }
 
-        internal List<UdpProcessRecord> LookupForUdpConnectedProcesses(ProgressBar progress)
+        internal List<UdpProcessRecord> LookupForUdpConnectedProcesses()
         {
             int bufferSize = 0;
             List<UdpProcessRecord> activeUdpConnections = new List<UdpProcessRecord>();
@@ -291,12 +285,7 @@ namespace ProgCop
                 // to get number of entries of the specified TCP table structure.
                 MIB_UDPTABLE_OWNER_PID udpRecordsTable = (MIB_UDPTABLE_OWNER_PID)Marshal.PtrToStructure(udpTableRecordPtr, typeof(MIB_UDPTABLE_OWNER_PID));
                 IntPtr tableRowPtr = (IntPtr)((long)udpTableRecordPtr + Marshal.SizeOf(udpRecordsTable.dwNumEntries));
-
-                //As Udp processes are fetched after tcp ones we just increase the progress bar maximum value
-                //to include udp entries too.
-                progress.Maximum = progress.Maximum + (int)udpRecordsTable.dwNumEntries;
-                progress.Step = 1;
-                
+     
                 // Reading and parsing the UDP records one by one from the table and
                 // storing them in a list of 'UdpProcessRecord' structure type objects.
                 for (int i = 0; i < udpRecordsTable.dwNumEntries; i++)
@@ -307,14 +296,12 @@ namespace ProgCop
                                                                   udpRow.owningPid);
                     tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(udpRow));
                     activeUdpConnections.Add(record);
-                    progress.Value++;
-                    Application.DoEvents();
                 }
             }
           
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "ProgCop error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //TODO: Write to the system log
             }
             finally
             {
