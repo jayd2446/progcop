@@ -250,7 +250,7 @@ namespace ProgCop
                                               BitConverter.ToUInt16(new byte[2] { tcpRow.remotePort[1], tcpRow.remotePort[0] }, 0), tcpRow.owningPid, tcpRow.state);
 
                     tableRowPtr = (IntPtr)((long)tableRowPtr + Marshal.SizeOf(tcpRow));
-
+                    
                     activeTcpConnections.Add(record);
                     progress.Value++;
                     Application.DoEvents();

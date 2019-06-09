@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace ProgCop
 {
@@ -12,6 +13,7 @@ namespace ProgCop
         public static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
 
         private ConnectedProcessesLookup _lookup;
+        private Timer _timer;
 
         internal MainWindow()
         {
@@ -22,11 +24,49 @@ namespace ProgCop
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
 
             _lookup = new ConnectedProcessesLookup();
+            _timer = new Timer();
+            _timer.Interval = 5000;
+            _timer.Tick += _timer_Tick1;
+            _timer.Start();
         }
 
-        private void _timer_Tick(object sender, EventArgs e)
+        private void _timer_Tick1(object sender, EventArgs e)
         {
-            UpdateConnectedProcessesView();
+            listViewInternetConnectedProcesses.BeginUpdate();
+            List<TcpProcessRecord> recordsTcpNew = _lookup.LookupForTcpConnectedProcesses(progressBarConnectedItems);
+           
+            foreach (TcpProcessRecord record in recordsTcpNew)
+            {
+                if (!listViewInternetConnectedProcesses.Items.ContainsKey(record.ProcessId.ToString()))
+                {
+                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
+                                                                           record.RemoteAddress.ToString(), record.LocalPort.ToString(),
+                                                                           record.RemotePort.ToString(), record.State.ToString(),
+                                                                           record.Protocol });
+                    itemNew.Tag = record.ProcessId;
+                    itemNew.Name = record.ProcessId.ToString();
+                    listViewInternetConnectedProcesses.Items.Add(itemNew);
+                }
+
+            }
+
+            foreach (ListViewItem item in listViewInternetConnectedProcesses.Items)
+            {
+                bool found = false;
+                foreach (TcpProcessRecord record in recordsTcpNew)
+                {
+                    if ((int)item.Tag == record.ProcessId)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(found == false)
+                {
+                    listViewInternetConnectedProcesses.Items.Remove(item);
+                }
+            }
+            listViewInternetConnectedProcesses.EndUpdate();
         }
 
         private void UpdateConnectedProcessesView()
@@ -42,7 +82,8 @@ namespace ProgCop
             {
                 ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), record.RemoteAddress.ToString(),
                 record.LocalPort.ToString(), record.RemotePort.ToString(), record.State.ToString(), record.Protocol });
-                item.Tag = record.ProcessFullPath;
+                item.Tag = record.ProcessId;
+                item.Name = record.ProcessId.ToString();
                 listViewInternetConnectedProcesses.Items.Add(item);
             }
 
@@ -50,7 +91,8 @@ namespace ProgCop
             {
                 ListViewItem item = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(), "",
                 record.LocalPort.ToString(), "", "", record.Protocol });
-                item.Tag = record.ProcessFullPath;
+                item.Tag = record.ProcessId;
+                item.Name = record.ProcessId.ToString();
                 listViewInternetConnectedProcesses.Items.Add(item);
             }
 
