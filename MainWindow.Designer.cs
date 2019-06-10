@@ -148,6 +148,7 @@
             this.listView1BlockedApplications.TabIndex = 0;
             this.listView1BlockedApplications.UseCompatibleStateImageBehavior = false;
             this.listView1BlockedApplications.View = System.Windows.Forms.View.Details;
+            this.listView1BlockedApplications.SelectedIndexChanged += new System.EventHandler(this.ListView1BlockedApplications_SelectedIndexChanged);
             this.listView1BlockedApplications.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListView1BlockedApplications_MouseClick);
             // 
             // columnHeaderBlockedApplicationName

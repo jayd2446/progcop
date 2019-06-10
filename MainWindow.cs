@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using WindowsFirewallHelper;
 using WindowsFirewallHelper.FirewallAPIv2.Rules;
+using System.Diagnostics;
 
 namespace ProgCop
 {
@@ -24,6 +26,8 @@ namespace ProgCop
             Font = SystemFonts.MessageBoxFont;
             
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
+
+            toolBarButtonDelProg.Enabled = false;
 
             _timer = new System.Windows.Forms.Timer();
             _timer.Interval = 5000;
@@ -113,6 +117,7 @@ namespace ProgCop
                 case "toolBarButtonAddProg":
                     break;
                 case "toolBarButtonDelProg":
+                    Unblock();
                     break;
                 case "toolBarButtonSettings":
                     break;
@@ -121,10 +126,18 @@ namespace ProgCop
 
         private void MenuItemContextBlock_Click(object sender, EventArgs e)
         {
-            int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
-            string path = ProcessMainModuleFilePath.GetPath(pid);
+            if (listViewInternetConnectedProcesses.SelectedItems.Count > 0)
+            {
+                int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
+                Block(pid);
+            }
+        }
 
-            if(path == null)
+        private void Block(int PID)
+        {
+            string path = ProcessMainModuleFilePath.GetPath(PID);
+
+            if (path == null)
             {
                 MessageBox.Show("Can't find path for the process. Probably an internal Windows process.");
                 return;
@@ -133,23 +146,38 @@ namespace ProgCop
             var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
                                                                       @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
                                                                       FirewallAction.Block, path); ;
-
             rule.Direction = FirewallDirection.Outbound;
             rule.Protocol = FirewallProtocol.Any;
-
-           
 
             FirewallManager.Instance.Rules.Add(rule);
 
             ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
             itemNew.Tag = rule;
             listView1BlockedApplications.Items.Add(itemNew);
+        }
 
+        private void Block(string path)
+        {
+            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
+                                                                      @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
+                                                                      FirewallAction.Block, path); ;
+            rule.Direction = FirewallDirection.Outbound;
+            rule.Protocol = FirewallProtocol.Any;
+
+            FirewallManager.Instance.Rules.Add(rule);
+
+            ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
+            itemNew.Tag = rule;
+            listView1BlockedApplications.Items.Add(itemNew);
         }
 
         private void MenuItemContextOpenFileLocation_Click(object sender, EventArgs e)
         {
+            int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
+            string path = ProcessMainModuleFilePath.GetPath(pid);
 
+            if (File.Exists(path))
+                Process.Start("explorer.exe", "/select," + path);
         }
 
         //TODO: These need error handling
@@ -160,14 +188,22 @@ namespace ProgCop
                     contextMenuConnectedItems.Show(listViewInternetConnectedProcesses, e.Location);
         }
 
+        private void Unblock()
+        {
+            if (listView1BlockedApplications.SelectedItems.Count > 0)
+            {
+                ListViewItem item = listView1BlockedApplications.SelectedItems[0];
+                var rule = (IRule)item.Tag;
+                var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+
+                FirewallManager.Instance.Rules.Remove(theRule);
+                listView1BlockedApplications.Items.Remove(item);
+            }
+        }
+
         private void MenuItemContextUnblock_Click(object sender, EventArgs e)
         {
-            ListViewItem item = listView1BlockedApplications.SelectedItems[0];
-            var rule = (IRule)item.Tag;
-            var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
-
-            FirewallManager.Instance.Rules.Remove(theRule);
-            listView1BlockedApplications.Items.Remove(item);
+            Unblock();
         }
 
         private void ListView1BlockedApplications_MouseClick(object sender, MouseEventArgs e)
@@ -175,6 +211,14 @@ namespace ProgCop
             if (e.Button == MouseButtons.Right)
                 if (listView1BlockedApplications.FocusedItem.Bounds.Contains(e.Location))
                     contextMenuBlockedApplications.Show(listView1BlockedApplications, e.Location);
+        }
+
+        private void ListView1BlockedApplications_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1BlockedApplications.SelectedItems.Count > 0)
+                toolBarButtonDelProg.Enabled = true;
+            else
+                toolBarButtonDelProg.Enabled = false;
         }
     }
 }
