@@ -259,7 +259,7 @@ namespace ProgCop
                 Marshal.FreeHGlobal(tcpTableRecordsPtr);
             }
 
-            return activeTcpConnections?.Distinct().ToList<TcpProcessRecord>();
+            return activeTcpConnections;
         }
 
         internal List<UdpProcessRecord> LookupForUdpConnectedProcesses()

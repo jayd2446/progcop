@@ -35,44 +35,60 @@ namespace ProgCop
             _timer.Start();
         }
 
-        delegate void UpdateViewCallback(ListView view);
+        //TODO: Run lookups from a different thread and return them to the main thread, then insert etc
+        List<TcpProcessRecord> _recordsTcpNew = new List<TcpProcessRecord>();
+
         private void UpdateListViewSafely(ListView view)
         {
-            List<TcpProcessRecord> recordsTcpNew = new ConnectedProcessesLookup().LookupForTcpConnectedProcesses();
-            List<UdpProcessRecord> recordsUdpNew = new ConnectedProcessesLookup().LookupForUdpConnectedProcesses();
 
-            foreach (TcpProcessRecord record in recordsTcpNew)
+            //TODO: this is what we want:
+            /*
+             * BackgroundWorker worker = new BackgroundWorker();
+worker.DoWork += (s, e) => {
+    //Some work...
+    e.Result = 42;
+};
+worker.RunWorkerCompleted += (s, e) => {
+    //e.Result "returned" from thread
+    Console.WriteLine(e.Result);
+};
+worker.RunWorkerAsync();
+*/
+
+            Thread th = new Thread(() =>
             {
-                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
+                List<TcpProcessRecord> recordsTcpNew = new ConnectedProcessesLookup().LookupForTcpConnectedProcesses();
+                //List<UdpProcessRecord> recordsUdpNew = new ConnectedProcessesLookup().LookupForUdpConnectedProcesses();
+                _recordsTcpNew = recordsTcpNew;
+            });
+
+            th.Start();
+            //th.Join();
+
+            foreach (TcpProcessRecord record in _recordsTcpNew)
                 {
-                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
+                    if (!view.Items.ContainsKey(record.ProcessId.ToString()))
+                    {
+                        ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
                                                                            record.RemoteAddress.ToString(), record.LocalPort.ToString(),
                                                                            record.RemotePort.ToString(), record.State.ToString(),
                                                                            record.ProcessId.ToString() });
-                    itemNew.Tag = record.ProcessId;
-                    itemNew.Name = record.ProcessId.ToString();
-                    view.Items.Add(itemNew);
-                }
-            }
+                        itemNew.Tag = record.ProcessId;
+                        itemNew.Name = record.ProcessId.ToString();
+                        view.Items.Add(itemNew);
 
-            foreach (UdpProcessRecord record in recordsUdpNew)
-            {
-                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
-                {
-                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
-                                                                           "", record.LocalPort.ToString(),
-                                                                           "", "",
-                                                                           record.ProcessId.ToString() });
-                    itemNew.Tag = record.ProcessId;
-                    itemNew.Name = record.ProcessId.ToString();
-                    view.Items.Add(itemNew);
+                    }
+
+
+
+                Application.DoEvents();
                 }
-            }
+           
 
             foreach (ListViewItem item in view.Items)
             {
                 bool found = false;
-                foreach (TcpProcessRecord record in recordsTcpNew)
+                foreach (TcpProcessRecord record in _recordsTcpNew)
                 {
                     if ((int)item.Tag == record.ProcessId)
                     {
@@ -84,20 +100,37 @@ namespace ProgCop
                 {
                     view.Items.Remove(item);
                 }
-            }
 
-           
+                
+            }
+            /*foreach (UdpProcessRecord record in recordsUdpNew)
+            {
+                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
+                {
+                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
+                                                                           "", record.LocalPort.ToString(),
+                                                                           "", "",
+                                                                           record.ProcessId.ToString() });
+                    itemNew.Tag = record.ProcessId;
+                    itemNew.Name = record.ProcessId.ToString();
+                    view.Items.Add(itemNew);
+                }
+            }*/
+
+
+
+
 
             view.Sorting = SortOrder.Ascending;
-            view.Sort();
-            //Need to reset the native theme everytime after calling .sort()
-            SetWindowTheme(view.Handle, "explorer", null);
+               view.Sort();
+                //Need to reset the native theme everytime after calling .sort()
+                SetWindowTheme(view.Handle, "explorer", null);
+         
         }
 
         internal void RefreshProcesses()
         {
-            UpdateViewCallback d = new UpdateViewCallback(UpdateListViewSafely);
-            Invoke(d, new object[] { listViewInternetConnectedProcesses});
+            UpdateListViewSafely(listViewInternetConnectedProcesses);
         }
 
         private void _timer_Tick1(object sender, EventArgs e)
