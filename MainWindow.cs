@@ -9,6 +9,7 @@ using System.Threading;
 using WindowsFirewallHelper;
 using WindowsFirewallHelper.FirewallAPIv2.Rules;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace ProgCop
 {
@@ -35,39 +36,19 @@ namespace ProgCop
             _timer.Start();
         }
 
-        //TODO: Run lookups from a different thread and return them to the main thread, then insert etc
-        List<TcpProcessRecord> _recordsTcpNew = new List<TcpProcessRecord>();
-
-        private void UpdateListViewSafely(ListView view)
+        private void UpdateListViewSafely()
         {
-
-            //TODO: this is what we want:
-            /*
-             * BackgroundWorker worker = new BackgroundWorker();
-worker.DoWork += (s, e) => {
-    //Some work...
-    e.Result = 42;
-};
-worker.RunWorkerCompleted += (s, e) => {
-    //e.Result "returned" from thread
-    Console.WriteLine(e.Result);
-};
-worker.RunWorkerAsync();
-*/
-
-            Thread th = new Thread(() =>
-            {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += (s, e) => {
                 List<TcpProcessRecord> recordsTcpNew = new ConnectedProcessesLookup().LookupForTcpConnectedProcesses();
-                //List<UdpProcessRecord> recordsUdpNew = new ConnectedProcessesLookup().LookupForUdpConnectedProcesses();
-                _recordsTcpNew = recordsTcpNew;
-            });
+                e.Result = recordsTcpNew;
+            };
 
-            th.Start();
-            //th.Join();
-
-            foreach (TcpProcessRecord record in _recordsTcpNew)
+            worker.RunWorkerCompleted += (s, e) => {
+                List<TcpProcessRecord> recordsTcpNew = (List<TcpProcessRecord>)e.Result;
+                foreach (TcpProcessRecord record in recordsTcpNew)
                 {
-                    if (!view.Items.ContainsKey(record.ProcessId.ToString()))
+                    if (!listViewInternetConnectedProcesses.Items.ContainsKey(record.ProcessId.ToString()))
                     {
                         ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
                                                                            record.RemoteAddress.ToString(), record.LocalPort.ToString(),
@@ -75,62 +56,44 @@ worker.RunWorkerAsync();
                                                                            record.ProcessId.ToString() });
                         itemNew.Tag = record.ProcessId;
                         itemNew.Name = record.ProcessId.ToString();
-                        view.Items.Add(itemNew);
+                        listViewInternetConnectedProcesses.Items.Add(itemNew);
 
                     }
-
-
-
-                Application.DoEvents();
                 }
-           
 
-            foreach (ListViewItem item in view.Items)
-            {
-                bool found = false;
-                foreach (TcpProcessRecord record in _recordsTcpNew)
+                //TODO: We need to remove connections that are no longer connected (in the records list)
+                foreach (ListViewItem item in listViewInternetConnectedProcesses.Items)
                 {
-                    if ((int)item.Tag == record.ProcessId)
+                    bool found = false;
+                    foreach (TcpProcessRecord record in recordsTcpNew)
                     {
-                        found = true;
-                        break;
+                        if ((int)item.Tag == record.ProcessId)
+                        {
+                            found = true;
+                            break;
+                        }
                     }
+                    if (found == false)
+                    {
+                        listViewInternetConnectedProcesses.Items.Remove(item);
+                    }
+
+
                 }
-                if (found == false)
-                {
-                    view.Items.Remove(item);
-                }
-
-                
-            }
-            /*foreach (UdpProcessRecord record in recordsUdpNew)
-            {
-                if (!view.Items.ContainsKey(record.ProcessId.ToString()))
-                {
-                    ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
-                                                                           "", record.LocalPort.ToString(),
-                                                                           "", "",
-                                                                           record.ProcessId.ToString() });
-                    itemNew.Tag = record.ProcessId;
-                    itemNew.Name = record.ProcessId.ToString();
-                    view.Items.Add(itemNew);
-                }
-            }*/
 
 
-
-
-
-            view.Sorting = SortOrder.Ascending;
-               view.Sort();
+                listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
+                listViewInternetConnectedProcesses.Sort();
                 //Need to reset the native theme everytime after calling .sort()
-                SetWindowTheme(view.Handle, "explorer", null);
-         
+                SetWindowTheme(listViewInternetConnectedProcesses.Handle, "explorer", null);
+            };
+
+            worker.RunWorkerAsync();
         }
 
         internal void RefreshProcesses()
         {
-            UpdateListViewSafely(listViewInternetConnectedProcesses);
+            UpdateListViewSafely();
         }
 
         private void _timer_Tick1(object sender, EventArgs e)
