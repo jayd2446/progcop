@@ -166,7 +166,9 @@ namespace ProgCop
             itemNew.Name = processName;
 
             listView1BlockedApplications.Items.Add(itemNew);
-            pBlockedProcessNames.Add(processName);
+
+            if (!pBlockedProcessNames.Contains(processName))
+                pBlockedProcessNames.Add(processName);
         }
 
         private void Block(string path)
@@ -179,10 +181,15 @@ namespace ProgCop
 
             FirewallManager.Instance.Rules.Add(rule);
 
+            string processName = Path.GetFileNameWithoutExtension(path);
+
             ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
             itemNew.Tag = rule;
+            itemNew.Name = processName;
             listView1BlockedApplications.Items.Add(itemNew);
-            //TODO: Get processname somehow and add to block list
+
+            if(!pBlockedProcessNames.Contains(processName))
+                pBlockedProcessNames.Add(processName);
         }
 
         private void MenuItemContextOpenFileLocation_Click(object sender, EventArgs e)
