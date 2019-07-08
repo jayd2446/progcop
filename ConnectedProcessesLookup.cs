@@ -158,7 +158,7 @@ namespace ProgCop
         internal MibTcpState State { get; set; }
         internal int ProcessId { get; set; }
         internal string ProcessName { get; set; }
-        internal string ProcessFullPath { get; set; }
+        //internal string ProcessFullPath { get; set; }
         internal string Protocol { get; set; }
 
         internal TcpProcessRecord(IPAddress localIp, IPAddress remoteIp, ushort localPort,
@@ -184,7 +184,7 @@ namespace ProgCop
         internal uint LocalPort { get; set; }
         internal int ProcessId { get; set; }
         internal string ProcessName { get; set; }
-        internal string ProcessFullPath { get; set; }
+        //internal string ProcessFullPath { get; set; }
         internal string Protocol { get; set; }
 
         internal UdpProcessRecord(IPAddress localAddress, uint localPort, int pId)

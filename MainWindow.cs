@@ -18,7 +18,8 @@ namespace ProgCop
         [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
         public static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
 
-        private System.Windows.Forms.Timer _timer;
+        private System.Windows.Forms.Timer pTimer;
+        private List<string> pBlockedProcessNames;
 
         internal MainWindow()
         {
@@ -30,38 +31,53 @@ namespace ProgCop
 
             toolBarButtonDelProg.Enabled = false;
 
-            _timer = new System.Windows.Forms.Timer();
-            _timer.Interval = 5000;
-            _timer.Tick += _timer_Tick1;
-            _timer.Start();
+            //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
+            pBlockedProcessNames = new List<string>();
+
+            pTimer = new System.Windows.Forms.Timer();
+            pTimer.Interval = 5000;
+            pTimer.Tick += _timer_Tick1;
+            pTimer.Start();
         }
 
         private void UpdateListViewSafely()
         {
             BackgroundWorker worker = new BackgroundWorker();
+
             worker.DoWork += (s, e) => {
                 List<TcpProcessRecord> recordsTcpNew = new ConnectedProcessesLookup().LookupForTcpConnectedProcesses();
                 e.Result = recordsTcpNew;
             };
 
             worker.RunWorkerCompleted += (s, e) => {
+
                 List<TcpProcessRecord> recordsTcpNew = (List<TcpProcessRecord>)e.Result;
                 foreach (TcpProcessRecord record in recordsTcpNew)
                 {
-                    if (!listViewInternetConnectedProcesses.Items.ContainsKey(record.ProcessId.ToString()))
+                    int processId = record.ProcessId;
+ 
+                    if (pBlockedProcessNames.Contains(record.ProcessName))
                     {
-                        ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
-                                                                           record.RemoteAddress.ToString(), record.LocalPort.ToString(),
-                                                                           record.RemotePort.ToString(), record.State.ToString(),
-                                                                           record.ProcessId.ToString() });
-                        itemNew.Tag = record.ProcessId;
-                        itemNew.Name = record.ProcessId.ToString();
-                        listViewInternetConnectedProcesses.Items.Add(itemNew);
-
+                        listViewInternetConnectedProcesses.Items.RemoveByKey(processId.ToString());
+                    }
+                    else
+                    {
+                        if (!listViewInternetConnectedProcesses.Items.ContainsKey(processId.ToString()))
+                        {
+                            ListViewItem itemNew = new ListViewItem(new string[] { record.ProcessName, record.LocalAddress.ToString(),
+                                                                                record.RemoteAddress.ToString(), record.LocalPort.ToString(),
+                                                                                record.RemotePort.ToString(), record.State.ToString(),
+                                                                                record.ProcessId.ToString()
+                                                                                }
+                                                                    );
+                            itemNew.Tag = record.ProcessId;
+                            itemNew.Name = record.ProcessId.ToString();
+                            listViewInternetConnectedProcesses.Items.Add(itemNew);
+                        }
                     }
                 }
 
-                //TODO: We need to remove connections that are no longer connected (in the records list)
+                //Handle processes that are no longer running on the system, but are on the list still
                 foreach (ListViewItem item in listViewInternetConnectedProcesses.Items)
                 {
                     bool found = false;
@@ -73,14 +89,9 @@ namespace ProgCop
                             break;
                         }
                     }
-                    if (found == false)
-                    {
+                    if (!found)
                         listViewInternetConnectedProcesses.Items.Remove(item);
-                    }
-
-
                 }
-
 
                 listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
                 listViewInternetConnectedProcesses.Sort();
@@ -146,10 +157,16 @@ namespace ProgCop
             rule.Protocol = FirewallProtocol.Any;
 
             FirewallManager.Instance.Rules.Add(rule);
+            string processName = Process.GetProcessById(PID).ProcessName;
 
             ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
             itemNew.Tag = rule;
+
+            //We use this in unblock to be able to remove item from blocked list
+            itemNew.Name = processName;
+
             listView1BlockedApplications.Items.Add(itemNew);
+            pBlockedProcessNames.Add(processName);
         }
 
         private void Block(string path)
@@ -165,6 +182,7 @@ namespace ProgCop
             ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
             itemNew.Tag = rule;
             listView1BlockedApplications.Items.Add(itemNew);
+            //TODO: Get processname somehow and add to block list
         }
 
         private void MenuItemContextOpenFileLocation_Click(object sender, EventArgs e)
@@ -176,7 +194,6 @@ namespace ProgCop
                 Process.Start("explorer.exe", "/select," + path);
         }
 
-        //TODO: These need error handling
         private void ListViewInternetConnectedProcesses_MouseClick(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Right)
@@ -194,6 +211,8 @@ namespace ProgCop
 
                 FirewallManager.Instance.Rules.Remove(theRule);
                 listView1BlockedApplications.Items.Remove(item);
+
+                pBlockedProcessNames.Remove(item.Name);
             }
         }
 
