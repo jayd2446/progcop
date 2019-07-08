@@ -132,13 +132,18 @@ namespace ProgCop
             }
         }
 
-        private void MenuItemContextBlock_Click(object sender, EventArgs e)
+        private void BlockSelectedProcess()
         {
             if (listViewInternetConnectedProcesses.SelectedItems.Count > 0)
             {
                 int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
                 Block(pid);
             }
+        }
+
+        private void MenuItemContextBlock_Click(object sender, EventArgs e)
+        {
+            BlockSelectedProcess();
         }
 
         private void SelectFileFromDiskAndBlock()
@@ -256,6 +261,46 @@ namespace ProgCop
                 toolBarButtonDelProg.Enabled = true;
             else
                 toolBarButtonDelProg.Enabled = false;
+        }
+
+        private void MenuItemAddProg_Click(object sender, EventArgs e)
+        {
+            SelectFileFromDiskAndBlock();
+        }
+
+        private void MenuItemBlock_Click(object sender, EventArgs e)
+        {
+            BlockSelectedProcess();
+        }
+
+        private void MenuItemUnBlock_Click(object sender, EventArgs e)
+        {
+            Unblock();
+        }
+
+        private void MenuItemEditMenu_Popup(object sender, EventArgs e)
+        {
+            if (listView1BlockedApplications.SelectedItems.Count == 0)
+            {
+                menuItemUnBlock.Enabled = false;
+                menuItemUnBlock.Text = "Unblock";
+            }
+            else
+            {
+                menuItemUnBlock.Enabled = true;
+                menuItemUnBlock.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
+            }
+
+            if (listViewInternetConnectedProcesses.SelectedItems.Count == 0)
+            {
+                menuItemBlock.Enabled = false;
+                menuItemBlock.Text = "Block";
+            }
+            else
+            {
+                menuItemBlock.Enabled = true;
+                menuItemBlock.Text = "Block " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
+            }
         }
     }
 }

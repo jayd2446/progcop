@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItemEditMenu = new System.Windows.Forms.MenuItem();
+            this.menuItemAddProg = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
+            this.menuItemBlock = new System.Windows.Forms.MenuItem();
+            this.menuItemUnBlock = new System.Windows.Forms.MenuItem();
             this.toolBar1 = new System.Windows.Forms.ToolBar();
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
@@ -66,12 +71,47 @@
             // mainMenu1
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem1});
+            this.menuItem1,
+            this.menuItemEditMenu});
             // 
             // menuItem1
             // 
             this.menuItem1.Index = 0;
             this.menuItem1.Text = "File";
+            // 
+            // menuItemEditMenu
+            // 
+            this.menuItemEditMenu.Index = 1;
+            this.menuItemEditMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemAddProg,
+            this.menuItem5,
+            this.menuItemBlock,
+            this.menuItemUnBlock});
+            this.menuItemEditMenu.Text = "Edit";
+            this.menuItemEditMenu.Popup += new System.EventHandler(this.MenuItemEditMenu_Popup);
+            // 
+            // menuItemAddProg
+            // 
+            this.menuItemAddProg.Index = 0;
+            this.menuItemAddProg.Text = "Add...";
+            this.menuItemAddProg.Click += new System.EventHandler(this.MenuItemAddProg_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 1;
+            this.menuItem5.Text = "-";
+            // 
+            // menuItemBlock
+            // 
+            this.menuItemBlock.Index = 2;
+            this.menuItemBlock.Text = "Block";
+            this.menuItemBlock.Click += new System.EventHandler(this.MenuItemBlock_Click);
+            // 
+            // menuItemUnBlock
+            // 
+            this.menuItemUnBlock.Index = 3;
+            this.menuItemUnBlock.Text = "Unblock";
+            this.menuItemUnBlock.Click += new System.EventHandler(this.MenuItemUnBlock_Click);
             // 
             // toolBar1
             // 
@@ -324,6 +364,11 @@
         private System.Windows.Forms.ToolBarButton toolBarButtonSettings;
         private System.Windows.Forms.ContextMenu contextMenuBlockedApplications;
         private System.Windows.Forms.MenuItem menuItemContextUnblock;
+        private System.Windows.Forms.MenuItem menuItemEditMenu;
+        private System.Windows.Forms.MenuItem menuItemAddProg;
+        private System.Windows.Forms.MenuItem menuItem5;
+        private System.Windows.Forms.MenuItem menuItemBlock;
+        private System.Windows.Forms.MenuItem menuItemUnBlock;
     }
 }
 
