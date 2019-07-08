@@ -122,6 +122,7 @@ namespace ProgCop
             switch(e.Button.Name)
             {
                 case "toolBarButtonAddProg":
+                    SelectFileFromDiskAndBlock();
                     break;
                 case "toolBarButtonDelProg":
                     Unblock();
@@ -138,6 +139,20 @@ namespace ProgCop
                 int pid = (int)listViewInternetConnectedProcesses.SelectedItems[0].Tag;
                 Block(pid);
             }
+        }
+
+        private void SelectFileFromDiskAndBlock()
+        {
+            this.Cursor = Cursors.WaitCursor;
+
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Title = "Select an application";
+            dlg.Filter = "Executable files (*.exe)|*.exe";
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+                Block(dlg.FileName);
+
+            this.Cursor = Cursors.Default;
         }
 
         private void Block(int PID)
