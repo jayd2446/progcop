@@ -37,6 +37,9 @@
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItemBlock = new System.Windows.Forms.MenuItem();
             this.menuItemUnBlock = new System.Windows.Forms.MenuItem();
+            this.menuItemHelpMenu = new System.Windows.Forms.MenuItem();
+            this.menuItemAbout = new System.Windows.Forms.MenuItem();
+            this.menuItemLicense = new System.Windows.Forms.MenuItem();
             this.toolBar1 = new System.Windows.Forms.ToolBar();
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
@@ -46,6 +49,7 @@
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.listView1BlockedApplications = new System.Windows.Forms.ListView();
             this.columnHeaderBlockedApplicationName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderBlockedState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listViewInternetConnectedProcesses = new System.Windows.Forms.ListView();
             this.columnHeaderProcessName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,7 +76,8 @@
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItem1,
-            this.menuItemEditMenu});
+            this.menuItemEditMenu,
+            this.menuItemHelpMenu});
             // 
             // menuItem1
             // 
@@ -112,6 +117,24 @@
             this.menuItemUnBlock.Index = 3;
             this.menuItemUnBlock.Text = "Unblock";
             this.menuItemUnBlock.Click += new System.EventHandler(this.MenuItemUnBlock_Click);
+            // 
+            // menuItemHelpMenu
+            // 
+            this.menuItemHelpMenu.Index = 2;
+            this.menuItemHelpMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemAbout,
+            this.menuItemLicense});
+            this.menuItemHelpMenu.Text = "Help";
+            // 
+            // menuItemAbout
+            // 
+            this.menuItemAbout.Index = 0;
+            this.menuItemAbout.Text = "About";
+            // 
+            // menuItemLicense
+            // 
+            this.menuItemLicense.Index = 1;
+            this.menuItemLicense.Text = "License...";
             // 
             // toolBar1
             // 
@@ -175,6 +198,7 @@
             this.listView1BlockedApplications.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView1BlockedApplications.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderBlockedApplicationName,
+            this.columnHeaderDisplayName,
             this.columnHeaderBlockedState});
             this.listView1BlockedApplications.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1BlockedApplications.FullRowSelect = true;
@@ -194,7 +218,12 @@
             // columnHeaderBlockedApplicationName
             // 
             this.columnHeaderBlockedApplicationName.Text = "Application";
-            this.columnHeaderBlockedApplicationName.Width = 550;
+            this.columnHeaderBlockedApplicationName.Width = 390;
+            // 
+            // columnHeaderDisplayName
+            // 
+            this.columnHeaderDisplayName.Text = "Process name";
+            this.columnHeaderDisplayName.Width = 190;
             // 
             // columnHeaderBlockedState
             // 
@@ -369,6 +398,10 @@
         private System.Windows.Forms.MenuItem menuItem5;
         private System.Windows.Forms.MenuItem menuItemBlock;
         private System.Windows.Forms.MenuItem menuItemUnBlock;
+        private System.Windows.Forms.MenuItem menuItemHelpMenu;
+        private System.Windows.Forms.MenuItem menuItemAbout;
+        private System.Windows.Forms.MenuItem menuItemLicense;
+        private System.Windows.Forms.ColumnHeader columnHeaderDisplayName;
     }
 }
 

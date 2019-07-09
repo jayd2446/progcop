@@ -179,7 +179,7 @@ namespace ProgCop
             FirewallManager.Instance.Rules.Add(rule);
             string processName = Process.GetProcessById(PID).ProcessName;
 
-            ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
+            ListViewItem itemNew = new ListViewItem(new string[] { path, processName, "BLOCKED" });
             itemNew.Tag = rule;
 
             //We use this in unblock to be able to remove item from blocked list
@@ -193,6 +193,7 @@ namespace ProgCop
 
         private void Block(string path)
         {
+            //TODO: Should we block on all profiles?
             var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
                                                                       @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
                                                                       FirewallAction.Block, path); ;
@@ -203,7 +204,7 @@ namespace ProgCop
 
             string processName = Path.GetFileNameWithoutExtension(path);
 
-            ListViewItem itemNew = new ListViewItem(new string[] { path, "BLOCKED" });
+            ListViewItem itemNew = new ListViewItem(new string[] { path, processName, "BLOCKED" });
             itemNew.Tag = rule;
             itemNew.Name = processName;
             listView1BlockedApplications.Items.Add(itemNew);
@@ -236,10 +237,18 @@ namespace ProgCop
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
 
-                FirewallManager.Instance.Rules.Remove(theRule);
-                listView1BlockedApplications.Items.Remove(item);
+                
 
-                pBlockedProcessNames.Remove(item.Name);
+                if (FirewallManager.Instance.Rules.Remove(theRule))
+                {
+                    pBlockedProcessNames.Remove(item.Name);
+                    listView1BlockedApplications.Items.Remove(item);
+                }
+                else
+                {
+                    MessageBox.Show("Removing rule " + rule.Name + " failed. Please contact support.", "ProgCop error", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
