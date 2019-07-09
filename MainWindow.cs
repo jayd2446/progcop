@@ -237,8 +237,6 @@ namespace ProgCop
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
 
-                
-
                 if (FirewallManager.Instance.Rules.Remove(theRule))
                 {
                     pBlockedProcessNames.Remove(item.Name);
