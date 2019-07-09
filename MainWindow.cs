@@ -16,7 +16,13 @@ namespace ProgCop
     internal partial class MainWindow : Form
     {
         [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
+        private static extern int SetWindowTheme(IntPtr hWnd, String pszSubAppName, String pszSubIdList);
+
+        private enum ShieldButtonImageColor
+        {
+            Normal = 3,
+            Gray = 4
+        }
 
         private System.Windows.Forms.Timer pTimer;
         private List<string> pBlockedProcessNames;
@@ -29,10 +35,27 @@ namespace ProgCop
             
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
 
+            toolBarButtonRulesEnabled.Pushed = true;
+            toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
             toolBarButtonDelProg.Enabled = false;
 
             //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
             pBlockedProcessNames = new List<string>();
+
+            if (listView1BlockedApplications.Items.Count > 0)
+            {
+                //TODO: Get the saved button state in here. We need to set the state in here in order to
+                //disabled state grayed out thing to work. Setting pushed=true will enable colors for the button even
+                //it is disabled.
+                toolBarButtonRulesEnabled.Pushed = true;
+                EnableDisableRules();
+                toolBarButtonRulesEnabled.Enabled = true;
+            }
+            else
+            {
+                toolBarButtonRulesEnabled.Enabled = false;
+                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
+            }
 
             pTimer = new System.Windows.Forms.Timer();
             pTimer.Interval = 5000;
@@ -95,8 +118,6 @@ namespace ProgCop
 
                 listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
                 listViewInternetConnectedProcesses.Sort();
-                //Need to reset the native theme everytime after calling .sort()
-                SetWindowTheme(listViewInternetConnectedProcesses.Handle, "explorer", null);
             };
 
             worker.RunWorkerAsync();
@@ -129,6 +150,31 @@ namespace ProgCop
                     break;
                 case "toolBarButtonSettings":
                     break;
+                case "toolBarButtonRulesEnabled":
+                    EnableDisableRules();
+                    break;
+            }
+        }
+
+        private void EnableDisableRules()
+        {
+            foreach(ListViewItem item in listView1BlockedApplications.Items)
+            {
+                var rule = (IRule)item.Tag;
+                var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+
+                if (toolBarButtonRulesEnabled.Pushed)
+                {
+                    theRule.IsEnable = true;
+                    item.SubItems[2].Text = "BLOCKED";
+                    item.ForeColor = Color.DarkGreen;
+                }
+                else
+                {
+                    theRule.IsEnable = false;
+                    item.SubItems[2].Text = "UNBLOCKED";
+                    item.ForeColor = Color.Red;
+                }
             }
         }
 
@@ -166,7 +212,8 @@ namespace ProgCop
 
             if (path == null)
             {
-                MessageBox.Show("Can't find path for the process. Probably an internal Windows process.");
+                MessageBox.Show(this, "Can't find path for the process. Probably an internal Windows process.",
+                    "ProgCop error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -184,8 +231,14 @@ namespace ProgCop
 
             //We use this in unblock to be able to remove item from blocked list
             itemNew.Name = processName;
-
+            itemNew.ForeColor = Color.Green;
             listView1BlockedApplications.Items.Add(itemNew);
+
+            if(!toolBarButtonRulesEnabled.Enabled)
+            {
+                toolBarButtonRulesEnabled.Enabled = true;
+                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
+            }
 
             if (!pBlockedProcessNames.Contains(processName))
                 pBlockedProcessNames.Add(processName);
@@ -193,7 +246,6 @@ namespace ProgCop
 
         private void Block(string path)
         {
-            //TODO: Should we block on all profiles?
             var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
                                                                       @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
                                                                       FirewallAction.Block, path); ;
@@ -201,15 +253,22 @@ namespace ProgCop
             rule.Protocol = FirewallProtocol.Any;
 
             FirewallManager.Instance.Rules.Add(rule);
-
+            
             string processName = Path.GetFileNameWithoutExtension(path);
 
             ListViewItem itemNew = new ListViewItem(new string[] { path, processName, "BLOCKED" });
             itemNew.Tag = rule;
             itemNew.Name = processName;
+            itemNew.ForeColor = Color.Green;
             listView1BlockedApplications.Items.Add(itemNew);
 
-            if(!pBlockedProcessNames.Contains(processName))
+            if (!toolBarButtonRulesEnabled.Enabled)
+            {
+                toolBarButtonRulesEnabled.Enabled = true;
+                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
+            }
+
+            if (!pBlockedProcessNames.Contains(processName))
                 pBlockedProcessNames.Add(processName);
         }
 
@@ -241,6 +300,12 @@ namespace ProgCop
                 {
                     pBlockedProcessNames.Remove(item.Name);
                     listView1BlockedApplications.Items.Remove(item);
+
+                    if (toolBarButtonRulesEnabled.Enabled && listView1BlockedApplications.Items.Count == 0)
+                    {
+                        toolBarButtonRulesEnabled.Enabled = false;
+                        toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
+                    }
                 }
                 else
                 {
@@ -265,9 +330,13 @@ namespace ProgCop
         private void ListView1BlockedApplications_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listView1BlockedApplications.SelectedItems.Count > 0)
+            {
                 toolBarButtonDelProg.Enabled = true;
+            }
             else
+            {
                 toolBarButtonDelProg.Enabled = false;
+            }
         }
 
         private void MenuItemAddProg_Click(object sender, EventArgs e)

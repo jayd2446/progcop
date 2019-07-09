@@ -44,6 +44,7 @@
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButtonRulesEnabled = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSettings = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
             this.statusBar1 = new System.Windows.Forms.StatusBar();
@@ -142,6 +143,7 @@
             this.toolBarButtonAddProg,
             this.toolBarButtonDelProg,
             this.toolBarButtonSeparator,
+            this.toolBarButtonRulesEnabled,
             this.toolBarButtonSettings});
             this.toolBar1.ButtonSize = new System.Drawing.Size(32, 32);
             this.toolBar1.DropDownArrows = true;
@@ -170,6 +172,13 @@
             this.toolBarButtonSeparator.Name = "toolBarButtonSeparator";
             this.toolBarButtonSeparator.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
             // 
+            // toolBarButtonRulesEnabled
+            // 
+            this.toolBarButtonRulesEnabled.ImageIndex = 3;
+            this.toolBarButtonRulesEnabled.Name = "toolBarButtonRulesEnabled";
+            this.toolBarButtonRulesEnabled.Style = System.Windows.Forms.ToolBarButtonStyle.ToggleButton;
+            this.toolBarButtonRulesEnabled.ToolTipText = "Enable/disable all";
+            // 
             // toolBarButtonSettings
             // 
             this.toolBarButtonSettings.ImageIndex = 1;
@@ -183,6 +192,8 @@
             this.imageList1Toolbar.Images.SetKeyName(0, "application_add.png");
             this.imageList1Toolbar.Images.SetKeyName(1, "setting_tools.png");
             this.imageList1Toolbar.Images.SetKeyName(2, "application_delete.png");
+            this.imageList1Toolbar.Images.SetKeyName(3, "shield.png");
+            this.imageList1Toolbar.Images.SetKeyName(4, "shield_gray.png");
             // 
             // statusBar1
             // 
@@ -208,7 +219,7 @@
             this.listView1BlockedApplications.MultiSelect = false;
             this.listView1BlockedApplications.Name = "listView1BlockedApplications";
             this.listView1BlockedApplications.ShowGroups = false;
-            this.listView1BlockedApplications.Size = new System.Drawing.Size(716, 243);
+            this.listView1BlockedApplications.Size = new System.Drawing.Size(716, 245);
             this.listView1BlockedApplications.TabIndex = 0;
             this.listView1BlockedApplications.UseCompatibleStateImageBehavior = false;
             this.listView1BlockedApplications.View = System.Windows.Forms.View.Details;
@@ -248,7 +259,7 @@
             this.listViewInternetConnectedProcesses.Location = new System.Drawing.Point(0, 0);
             this.listViewInternetConnectedProcesses.Name = "listViewInternetConnectedProcesses";
             this.listViewInternetConnectedProcesses.ShowGroups = false;
-            this.listViewInternetConnectedProcesses.Size = new System.Drawing.Size(716, 471);
+            this.listViewInternetConnectedProcesses.Size = new System.Drawing.Size(716, 469);
             this.listViewInternetConnectedProcesses.TabIndex = 0;
             this.listViewInternetConnectedProcesses.UseCompatibleStateImageBehavior = false;
             this.listViewInternetConnectedProcesses.View = System.Windows.Forms.View.Details;
@@ -303,7 +314,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listViewInternetConnectedProcesses);
             this.splitContainer1.Size = new System.Drawing.Size(716, 718);
-            this.splitContainer1.SplitterDistance = 243;
+            this.splitContainer1.SplitterDistance = 245;
             this.splitContainer1.TabIndex = 3;
             // 
             // contextMenuConnectedItems
@@ -402,6 +413,7 @@
         private System.Windows.Forms.MenuItem menuItemAbout;
         private System.Windows.Forms.MenuItem menuItemLicense;
         private System.Windows.Forms.ColumnHeader columnHeaderDisplayName;
+        private System.Windows.Forms.ToolBarButton toolBarButtonRulesEnabled;
     }
 }
 
