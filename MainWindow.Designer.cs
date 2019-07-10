@@ -47,6 +47,9 @@
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonRulesEnabled = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButtonBlockOnly = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButtonUnblockOnly = new System.Windows.Forms.ToolBarButton();
+            this.toolBarButton1 = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSettings = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
             this.statusBar1 = new System.Windows.Forms.StatusBar();
@@ -97,7 +100,7 @@
             this.menuItemUnBlock,
             this.menuItem2,
             this.menuItemEnableDisableAll});
-            this.menuItemEditMenu.Text = "Application";
+            this.menuItemEditMenu.Text = "Rules";
             this.menuItemEditMenu.Popup += new System.EventHandler(this.MenuItemEditMenu_Popup);
             // 
             // menuItemAddProg
@@ -114,13 +117,13 @@
             // menuItemBlock
             // 
             this.menuItemBlock.Index = 2;
-            this.menuItemBlock.Text = "Block";
+            this.menuItemBlock.Text = "Block and Add to List";
             this.menuItemBlock.Click += new System.EventHandler(this.MenuItemBlock_Click);
             // 
             // menuItemUnBlock
             // 
             this.menuItemUnBlock.Index = 3;
-            this.menuItemUnBlock.Text = "Unblock";
+            this.menuItemUnBlock.Text = "Unblock and Remove from List";
             this.menuItemUnBlock.Click += new System.EventHandler(this.MenuItemUnBlock_Click);
             // 
             // menuItem2
@@ -131,7 +134,7 @@
             // menuItemEnableDisableAll
             // 
             this.menuItemEnableDisableAll.Index = 5;
-            this.menuItemEnableDisableAll.Text = "Enable all";
+            this.menuItemEnableDisableAll.Text = "Enable All";
             this.menuItemEnableDisableAll.Click += new System.EventHandler(this.MenuItemEnableDisableAll_Click);
             // 
             // menuItemHelpMenu
@@ -159,6 +162,9 @@
             this.toolBarButtonDelProg,
             this.toolBarButtonSeparator,
             this.toolBarButtonRulesEnabled,
+            this.toolBarButtonBlockOnly,
+            this.toolBarButtonUnblockOnly,
+            this.toolBarButton1,
             this.toolBarButtonSettings});
             this.toolBar1.ButtonSize = new System.Drawing.Size(32, 32);
             this.toolBar1.DropDownArrows = true;
@@ -174,13 +180,13 @@
             // 
             this.toolBarButtonAddProg.ImageIndex = 0;
             this.toolBarButtonAddProg.Name = "toolBarButtonAddProg";
-            this.toolBarButtonAddProg.ToolTipText = "Block an application";
+            this.toolBarButtonAddProg.ToolTipText = "Add...";
             // 
             // toolBarButtonDelProg
             // 
             this.toolBarButtonDelProg.ImageIndex = 2;
             this.toolBarButtonDelProg.Name = "toolBarButtonDelProg";
-            this.toolBarButtonDelProg.ToolTipText = "Unblock an application";
+            this.toolBarButtonDelProg.ToolTipText = "Unblock and Remove from List";
             // 
             // toolBarButtonSeparator
             // 
@@ -193,6 +199,23 @@
             this.toolBarButtonRulesEnabled.Name = "toolBarButtonRulesEnabled";
             this.toolBarButtonRulesEnabled.Style = System.Windows.Forms.ToolBarButtonStyle.ToggleButton;
             this.toolBarButtonRulesEnabled.ToolTipText = "Block/unblock all";
+            // 
+            // toolBarButtonBlockOnly
+            // 
+            this.toolBarButtonBlockOnly.ImageIndex = 5;
+            this.toolBarButtonBlockOnly.Name = "toolBarButtonBlockOnly";
+            this.toolBarButtonBlockOnly.ToolTipText = "Block selected";
+            // 
+            // toolBarButtonUnblockOnly
+            // 
+            this.toolBarButtonUnblockOnly.ImageIndex = 6;
+            this.toolBarButtonUnblockOnly.Name = "toolBarButtonUnblockOnly";
+            this.toolBarButtonUnblockOnly.ToolTipText = "Unblock selected";
+            // 
+            // toolBarButton1
+            // 
+            this.toolBarButton1.Name = "toolBarButton1";
+            this.toolBarButton1.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
             // 
             // toolBarButtonSettings
             // 
@@ -209,6 +232,8 @@
             this.imageList1Toolbar.Images.SetKeyName(2, "application_delete.png");
             this.imageList1Toolbar.Images.SetKeyName(3, "shield.png");
             this.imageList1Toolbar.Images.SetKeyName(4, "shield_gray.png");
+            this.imageList1Toolbar.Images.SetKeyName(5, "shield_add.png");
+            this.imageList1Toolbar.Images.SetKeyName(6, "shield_delete.png");
             // 
             // statusBar1
             // 
@@ -342,7 +367,7 @@
             // menuItemContextBlock
             // 
             this.menuItemContextBlock.Index = 0;
-            this.menuItemContextBlock.Text = "Block";
+            this.menuItemContextBlock.Text = "Block and Add to List";
             this.menuItemContextBlock.Click += new System.EventHandler(this.MenuItemContextBlock_Click);
             // 
             // menuItem4
@@ -364,7 +389,7 @@
             // menuItemContextUnblock
             // 
             this.menuItemContextUnblock.Index = 0;
-            this.menuItemContextUnblock.Text = "Unblock";
+            this.menuItemContextUnblock.Text = "Unblock and Remove";
             this.menuItemContextUnblock.Click += new System.EventHandler(this.MenuItemContextUnblock_Click);
             // 
             // MainWindow
@@ -431,6 +456,9 @@
         private System.Windows.Forms.ToolBarButton toolBarButtonRulesEnabled;
         private System.Windows.Forms.MenuItem menuItem2;
         private System.Windows.Forms.MenuItem menuItemEnableDisableAll;
+        private System.Windows.Forms.ToolBarButton toolBarButtonBlockOnly;
+        private System.Windows.Forms.ToolBarButton toolBarButtonUnblockOnly;
+        private System.Windows.Forms.ToolBarButton toolBarButton1;
     }
 }
 

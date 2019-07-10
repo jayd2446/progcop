@@ -157,10 +157,15 @@ namespace ProgCop
                 case "toolBarButtonRulesEnabled":
                     EnableDisableRules();
                     break;
+                case "toolBarButtonUnblockOnly":
+                    EnableDisableSelectedRule(false);
+                    break;
+                case "toolBarButtonBlockOnly":
+                    EnableDisableSelectedRule(true);
+                    break;
             }
         }
 
-        //TODO: Find process in the blocked list and set the state
         private void EnableDisableRules()
         {
             BlockedProcess process = null;
@@ -187,6 +192,41 @@ namespace ProgCop
                     if (process != null)
                         process.StateBlocked = false;
                 }
+            }
+        }
+
+        private void EnableDisableSelectedRule(bool stateBlocked)
+        {
+            BlockedProcess process = null;
+
+            if(listView1BlockedApplications.SelectedItems.Count > 0)
+            {
+                ListViewItem item = listView1BlockedApplications.SelectedItems[0];
+                var rule = (IRule)item.Tag;
+                var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+                process = pBlockedProcessList.GetProcessByName(item.Name);
+
+                if(stateBlocked)
+                {
+                    theRule.IsEnable = true;
+                    item.SubItems[2].Text = "BLOCKED";
+                    item.ForeColor = Color.DarkGreen;
+                    if (process != null)
+                        process.StateBlocked = true;
+                }
+                else
+                {
+                    theRule.IsEnable = false;
+                    item.SubItems[2].Text = "UNBLOCKED";
+                    item.ForeColor = Color.Red;
+                    if (process != null)
+                        process.StateBlocked = false;
+                }
+            }
+            else
+            {
+                MessageBox.Show(this, "Please select a rule first.",
+                   "ProgCop Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -371,31 +411,31 @@ namespace ProgCop
             if (listView1BlockedApplications.SelectedItems.Count == 0)
             {
                 menuItemUnBlock.Enabled = false;
-                menuItemUnBlock.Text = "Unblock";
+                menuItemUnBlock.Text = "Unblock And Remove";
             }
             else
             {
                 menuItemUnBlock.Enabled = true;
-                menuItemUnBlock.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
+                menuItemUnBlock.Text = "Unblock And Remove " + listView1BlockedApplications.SelectedItems[0].Text;
             }
 
             if (listViewInternetConnectedProcesses.SelectedItems.Count == 0)
             {
                 menuItemBlock.Enabled = false;
-                menuItemBlock.Text = "Block";
+                menuItemBlock.Text = "Block And Add";
             }
             else
             {
                 menuItemBlock.Enabled = true;
-                menuItemBlock.Text = "Block " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
+                menuItemBlock.Text = "Block And Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
             }
 
             menuItemEnableDisableAll.Checked = toolBarButtonRulesEnabled.Pushed;
             menuItemEnableDisableAll.Enabled = toolBarButtonRulesEnabled.Enabled;
             if (menuItemEnableDisableAll.Checked)
-                menuItemEnableDisableAll.Text = "Unblock all";
+                menuItemEnableDisableAll.Text = "Unblock All";
             else
-                menuItemEnableDisableAll.Text = "Block all";
+                menuItemEnableDisableAll.Text = "Block All";
         }
 
         private void MenuItemEnableDisableAll_Click(object sender, EventArgs e)
