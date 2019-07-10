@@ -25,7 +25,8 @@ namespace ProgCop
         }
 
         private System.Windows.Forms.Timer pTimer;
-        private List<string> pBlockedProcessNames;
+        //private List<string> pBlockedProcessNames;
+        private BlockedProcessList pBlockedProcessList;
 
         internal MainWindow()
         {
@@ -40,7 +41,9 @@ namespace ProgCop
             toolBarButtonDelProg.Enabled = false;
 
             //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
-            pBlockedProcessNames = new List<string>();
+            //pBlockedProcessNames = new List<string>();
+            pBlockedProcessList = new BlockedProcessList();
+
 
             if (listView1BlockedApplications.Items.Count > 0)
             {
@@ -79,7 +82,8 @@ namespace ProgCop
                 {
                     int processId = record.ProcessId;
  
-                    if (pBlockedProcessNames.Contains(record.ProcessName))
+                    if (pBlockedProcessList.ContainsProcessNamed(record.ProcessName) && 
+                    pBlockedProcessList.GetProcessStateByProcessName(record.ProcessName) == true)
                     {
                         listViewInternetConnectedProcesses.Items.RemoveByKey(processId.ToString());
                     }
@@ -156,24 +160,32 @@ namespace ProgCop
             }
         }
 
+        //TODO: Find process in the blocked list and set the state
         private void EnableDisableRules()
         {
+            BlockedProcess process = null;
+
             foreach(ListViewItem item in listView1BlockedApplications.Items)
             {
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+                process = pBlockedProcessList.GetProcessByName(item.Name);
 
                 if (toolBarButtonRulesEnabled.Pushed)
                 {
                     theRule.IsEnable = true;
                     item.SubItems[2].Text = "BLOCKED";
                     item.ForeColor = Color.DarkGreen;
+                    if (process != null)
+                        process.StateBlocked = true;
                 }
                 else
                 {
                     theRule.IsEnable = false;
                     item.SubItems[2].Text = "UNBLOCKED";
                     item.ForeColor = Color.Red;
+                    if (process != null)
+                        process.StateBlocked = false;
                 }
             }
         }
@@ -240,8 +252,8 @@ namespace ProgCop
                 toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
             }
 
-            if (!pBlockedProcessNames.Contains(processName))
-                pBlockedProcessNames.Add(processName);
+            if (!pBlockedProcessList.ContainsProcessNamed(processName))
+                pBlockedProcessList.Add(new BlockedProcess(path, processName, true));
         }
 
         private void Block(string path)
@@ -268,8 +280,8 @@ namespace ProgCop
                 toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
             }
 
-            if (!pBlockedProcessNames.Contains(processName))
-                pBlockedProcessNames.Add(processName);
+            if (!pBlockedProcessList.ContainsProcessNamed(processName))
+                pBlockedProcessList.Add(new BlockedProcess(path, processName, true));
         }
 
         private void MenuItemContextOpenFileLocation_Click(object sender, EventArgs e)
@@ -298,7 +310,7 @@ namespace ProgCop
 
                 if (FirewallManager.Instance.Rules.Remove(theRule))
                 {
-                    pBlockedProcessNames.Remove(item.Name);
+                    pBlockedProcessList.RemoveByProcessName(item.Name);
                     listView1BlockedApplications.Items.Remove(item);
 
                     if (toolBarButtonRulesEnabled.Enabled && listView1BlockedApplications.Items.Count == 0)
@@ -376,6 +388,29 @@ namespace ProgCop
             {
                 menuItemBlock.Enabled = true;
                 menuItemBlock.Text = "Block " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
+            }
+
+            menuItemEnableDisableAll.Checked = toolBarButtonRulesEnabled.Pushed;
+            menuItemEnableDisableAll.Enabled = toolBarButtonRulesEnabled.Enabled;
+            if (menuItemEnableDisableAll.Checked)
+                menuItemEnableDisableAll.Text = "Unblock all";
+            else
+                menuItemEnableDisableAll.Text = "Block all";
+        }
+
+        private void MenuItemEnableDisableAll_Click(object sender, EventArgs e)
+        {
+            if(menuItemEnableDisableAll.Checked)
+            {
+                menuItemEnableDisableAll.Checked = false;
+                toolBarButtonRulesEnabled.Pushed = false;
+                EnableDisableRules();
+            }
+            else
+            {
+                menuItemEnableDisableAll.Checked = true;
+                toolBarButtonRulesEnabled.Pushed = true;
+                EnableDisableRules();
             }
         }
     }

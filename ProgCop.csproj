@@ -99,6 +99,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockedProcess.cs" />
+    <Compile Include="BlockedProcessList.cs" />
     <Compile Include="ConnectedProcessesLookup.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>

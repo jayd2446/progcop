@@ -37,6 +37,8 @@
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.menuItemBlock = new System.Windows.Forms.MenuItem();
             this.menuItemUnBlock = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItemEnableDisableAll = new System.Windows.Forms.MenuItem();
             this.menuItemHelpMenu = new System.Windows.Forms.MenuItem();
             this.menuItemAbout = new System.Windows.Forms.MenuItem();
             this.menuItemLicense = new System.Windows.Forms.MenuItem();
@@ -92,8 +94,10 @@
             this.menuItemAddProg,
             this.menuItem5,
             this.menuItemBlock,
-            this.menuItemUnBlock});
-            this.menuItemEditMenu.Text = "Edit";
+            this.menuItemUnBlock,
+            this.menuItem2,
+            this.menuItemEnableDisableAll});
+            this.menuItemEditMenu.Text = "Application";
             this.menuItemEditMenu.Popup += new System.EventHandler(this.MenuItemEditMenu_Popup);
             // 
             // menuItemAddProg
@@ -118,6 +122,17 @@
             this.menuItemUnBlock.Index = 3;
             this.menuItemUnBlock.Text = "Unblock";
             this.menuItemUnBlock.Click += new System.EventHandler(this.MenuItemUnBlock_Click);
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 4;
+            this.menuItem2.Text = "-";
+            // 
+            // menuItemEnableDisableAll
+            // 
+            this.menuItemEnableDisableAll.Index = 5;
+            this.menuItemEnableDisableAll.Text = "Enable all";
+            this.menuItemEnableDisableAll.Click += new System.EventHandler(this.MenuItemEnableDisableAll_Click);
             // 
             // menuItemHelpMenu
             // 
@@ -177,7 +192,7 @@
             this.toolBarButtonRulesEnabled.ImageIndex = 3;
             this.toolBarButtonRulesEnabled.Name = "toolBarButtonRulesEnabled";
             this.toolBarButtonRulesEnabled.Style = System.Windows.Forms.ToolBarButtonStyle.ToggleButton;
-            this.toolBarButtonRulesEnabled.ToolTipText = "Enable/disable all";
+            this.toolBarButtonRulesEnabled.ToolTipText = "Block/unblock all";
             // 
             // toolBarButtonSettings
             // 
@@ -228,7 +243,7 @@
             // 
             // columnHeaderBlockedApplicationName
             // 
-            this.columnHeaderBlockedApplicationName.Text = "Application";
+            this.columnHeaderBlockedApplicationName.Text = "Application path";
             this.columnHeaderBlockedApplicationName.Width = 390;
             // 
             // columnHeaderDisplayName
@@ -414,6 +429,8 @@
         private System.Windows.Forms.MenuItem menuItemLicense;
         private System.Windows.Forms.ColumnHeader columnHeaderDisplayName;
         private System.Windows.Forms.ToolBarButton toolBarButtonRulesEnabled;
+        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItemEnableDisableAll;
     }
 }
 
