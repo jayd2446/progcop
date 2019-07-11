@@ -38,6 +38,9 @@
             this.menuItemBlock = new System.Windows.Forms.MenuItem();
             this.menuItemUnBlock = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItemBlockSelected = new System.Windows.Forms.MenuItem();
+            this.menuItemUnblockSelected = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuItemEnableDisableAll = new System.Windows.Forms.MenuItem();
             this.menuItemHelpMenu = new System.Windows.Forms.MenuItem();
             this.menuItemAbout = new System.Windows.Forms.MenuItem();
@@ -99,6 +102,9 @@
             this.menuItemBlock,
             this.menuItemUnBlock,
             this.menuItem2,
+            this.menuItemBlockSelected,
+            this.menuItemUnblockSelected,
+            this.menuItem3,
             this.menuItemEnableDisableAll});
             this.menuItemEditMenu.Text = "Rules";
             this.menuItemEditMenu.Popup += new System.EventHandler(this.MenuItemEditMenu_Popup);
@@ -131,9 +137,26 @@
             this.menuItem2.Index = 4;
             this.menuItem2.Text = "-";
             // 
+            // menuItemBlockSelected
+            // 
+            this.menuItemBlockSelected.Index = 5;
+            this.menuItemBlockSelected.Text = "Block";
+            this.menuItemBlockSelected.Click += new System.EventHandler(this.MenuItemBlockSelected_Click);
+            // 
+            // menuItemUnblockSelected
+            // 
+            this.menuItemUnblockSelected.Index = 6;
+            this.menuItemUnblockSelected.Text = "Unblock";
+            this.menuItemUnblockSelected.Click += new System.EventHandler(this.MenuItemUnblockSelected_Click);
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 7;
+            this.menuItem3.Text = "-";
+            // 
             // menuItemEnableDisableAll
             // 
-            this.menuItemEnableDisableAll.Index = 5;
+            this.menuItemEnableDisableAll.Index = 8;
             this.menuItemEnableDisableAll.Text = "Enable All";
             this.menuItemEnableDisableAll.Click += new System.EventHandler(this.MenuItemEnableDisableAll_Click);
             // 
@@ -363,6 +386,7 @@
             this.menuItemContextBlock,
             this.menuItem4,
             this.menuItemContextOpenFileLocation});
+            this.contextMenuConnectedItems.Popup += new System.EventHandler(this.ContextMenuConnectedItems_Popup);
             // 
             // menuItemContextBlock
             // 
@@ -389,7 +413,7 @@
             // menuItemContextUnblock
             // 
             this.menuItemContextUnblock.Index = 0;
-            this.menuItemContextUnblock.Text = "Unblock and Remove";
+            this.menuItemContextUnblock.Text = "Remove";
             this.menuItemContextUnblock.Click += new System.EventHandler(this.MenuItemContextUnblock_Click);
             // 
             // MainWindow
@@ -459,6 +483,9 @@
         private System.Windows.Forms.ToolBarButton toolBarButtonBlockOnly;
         private System.Windows.Forms.ToolBarButton toolBarButtonUnblockOnly;
         private System.Windows.Forms.ToolBarButton toolBarButton1;
+        private System.Windows.Forms.MenuItem menuItemBlockSelected;
+        private System.Windows.Forms.MenuItem menuItemUnblockSelected;
+        private System.Windows.Forms.MenuItem menuItem3;
     }
 }
 
