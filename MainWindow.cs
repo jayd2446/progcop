@@ -411,23 +411,23 @@ namespace ProgCop
             if (listView1BlockedApplications.SelectedItems.Count == 0)
             {
                 menuItemUnBlock.Enabled = false;
-                menuItemUnBlock.Text = "Unblock And Remove";
+                menuItemUnBlock.Text = "Remove application";
             }
             else
             {
                 menuItemUnBlock.Enabled = true;
-                menuItemUnBlock.Text = "Unblock And Remove " + listView1BlockedApplications.SelectedItems[0].Text;
+                menuItemUnBlock.Text = "Remove " + listView1BlockedApplications.SelectedItems[0].Text;
             }
 
             if (listViewInternetConnectedProcesses.SelectedItems.Count == 0)
             {
                 menuItemBlock.Enabled = false;
-                menuItemBlock.Text = "Block And Add";
+                menuItemBlock.Text = "Add";
             }
             else
             {
                 menuItemBlock.Enabled = true;
-                menuItemBlock.Text = "Block And Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
+                menuItemBlock.Text = "Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
             }
 
             menuItemEnableDisableAll.Checked = toolBarButtonRulesEnabled.Pushed;

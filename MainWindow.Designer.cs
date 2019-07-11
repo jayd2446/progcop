@@ -106,7 +106,7 @@
             // menuItemAddProg
             // 
             this.menuItemAddProg.Index = 0;
-            this.menuItemAddProg.Text = "Add...";
+            this.menuItemAddProg.Text = "Add application...";
             this.menuItemAddProg.Click += new System.EventHandler(this.MenuItemAddProg_Click);
             // 
             // menuItem5
@@ -180,13 +180,13 @@
             // 
             this.toolBarButtonAddProg.ImageIndex = 0;
             this.toolBarButtonAddProg.Name = "toolBarButtonAddProg";
-            this.toolBarButtonAddProg.ToolTipText = "Add...";
+            this.toolBarButtonAddProg.ToolTipText = "Add application...";
             // 
             // toolBarButtonDelProg
             // 
             this.toolBarButtonDelProg.ImageIndex = 2;
             this.toolBarButtonDelProg.Name = "toolBarButtonDelProg";
-            this.toolBarButtonDelProg.ToolTipText = "Unblock and Remove from List";
+            this.toolBarButtonDelProg.ToolTipText = "Remove application";
             // 
             // toolBarButtonSeparator
             // 
@@ -367,7 +367,7 @@
             // menuItemContextBlock
             // 
             this.menuItemContextBlock.Index = 0;
-            this.menuItemContextBlock.Text = "Block and Add to List";
+            this.menuItemContextBlock.Text = "Block";
             this.menuItemContextBlock.Click += new System.EventHandler(this.MenuItemContextBlock_Click);
             // 
             // menuItem4
