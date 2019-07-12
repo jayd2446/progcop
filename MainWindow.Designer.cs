@@ -56,6 +56,8 @@
             this.toolBarButtonSettings = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
             this.statusBarMain = new System.Windows.Forms.StatusBar();
+            this.statusBarPanel1 = new System.Windows.Forms.StatusBarPanel();
+            this.statusBarPanel2 = new System.Windows.Forms.StatusBarPanel();
             this.listView1BlockedApplications = new System.Windows.Forms.ListView();
             this.columnHeaderBlockedApplicationName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -75,6 +77,8 @@
             this.menuItemContextOpenFileLocation = new System.Windows.Forms.MenuItem();
             this.contextMenuBlockedApplications = new System.Windows.Forms.ContextMenu();
             this.menuItemContextUnblock = new System.Windows.Forms.MenuItem();
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -263,9 +267,24 @@
             this.statusBarMain.CausesValidation = false;
             this.statusBarMain.Location = new System.Drawing.Point(0, 762);
             this.statusBarMain.Name = "statusBarMain";
+            this.statusBarMain.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
+            this.statusBarPanel1,
+            this.statusBarPanel2});
+            this.statusBarMain.ShowPanels = true;
             this.statusBarMain.Size = new System.Drawing.Size(716, 22);
             this.statusBarMain.TabIndex = 2;
             this.statusBarMain.Text = "Ready";
+            // 
+            // statusBarPanel1
+            // 
+            this.statusBarPanel1.Name = "statusBarPanel1";
+            this.statusBarPanel1.Text = "statusBarPanel1";
+            // 
+            // statusBarPanel2
+            // 
+            this.statusBarPanel2.Name = "statusBarPanel2";
+            this.statusBarPanel2.Text = "statusBarPanel2";
+            this.statusBarPanel2.Width = 400;
             // 
             // listView1BlockedApplications
             // 
@@ -431,6 +450,8 @@
             this.Text = "ProgCop";
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.Shown += new System.EventHandler(this.MainWindow_Shown);
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -487,6 +508,8 @@
         private System.Windows.Forms.MenuItem menuItemBlockSelected;
         private System.Windows.Forms.MenuItem menuItemUnblockSelected;
         private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.StatusBarPanel statusBarPanel1;
+        private System.Windows.Forms.StatusBarPanel statusBarPanel2;
     }
 }
 

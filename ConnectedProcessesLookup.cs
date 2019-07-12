@@ -252,7 +252,7 @@ namespace ProgCop
             }
             catch(Exception ex)
             {
-                //TODO: Write to the system log
+                Logger.Write("LookupForTcpConnectedProcesses(): " + ex.Message);
             }
             finally
             {
@@ -301,7 +301,7 @@ namespace ProgCop
           
             catch (Exception ex)
             {
-                //TODO: Write to the system log
+                Logger.Write("LookupForUdpConnectedProcesses(): " + ex.Message);
             }
             finally
             {

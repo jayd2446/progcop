@@ -25,7 +25,7 @@ namespace ProgCop
         }
 
         private System.Windows.Forms.Timer pTimer;
-        //private List<string> pBlockedProcessNames;
+        private System.Windows.Forms.Timer pTimerStatus;
         private BlockedProcessList pBlockedProcessList;
 
         internal MainWindow()
@@ -60,13 +60,33 @@ namespace ProgCop
             {
                 toolBarButtonRulesEnabled.Enabled = false;
                 toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
-
             }
 
             pTimer = new System.Windows.Forms.Timer();
+            pTimerStatus = new System.Windows.Forms.Timer();
+
+            pTimerStatus.Interval = 3000;
             pTimer.Interval = 5000;
             pTimer.Tick += _timer_Tick1;
+            pTimerStatus.Tick += PTimerStatus_Tick;
+
             pTimer.Start();
+            pTimerStatus.Start();
+
+            HandleStatusBar();
+        }
+
+        private void HandleStatusBar()
+        {
+            if (IsWindowsFirewallEnabled())
+                statusBarPanel2.Text = "Firewall enabled";
+            else
+                statusBarPanel2.Text = "Firewall not enabled";
+        }
+
+        private void PTimerStatus_Tick(object sender, EventArgs e)
+        {
+            HandleStatusBar();
         }
 
         private void UpdateListViewSafely()
@@ -182,8 +202,8 @@ namespace ProgCop
 
                 if(theRule == null)
                 {
-                    //TODO: Write to system log, the rule has been removed (probably) via the windows firewall gui
-                   
+                    Logger.Write("EnableDisableRules(): rule does not exist. Only removing it from the view.");
+
                     indexesToRemoveFromView.Add(item.Index);
                     continue;
                 }
@@ -245,7 +265,7 @@ namespace ProgCop
 
                 if(theRule == null)
                 {
-                    //TODO: ALso this needs system logging
+                    Logger.Write("EnableDisableSelectedRule(): rule does not exist. Only removing it from the view.");
                     pBlockedProcessList.RemoveByProcessName(item.Name);
                     listView1BlockedApplications.Items.Remove(item);
                     return;
@@ -260,7 +280,7 @@ namespace ProgCop
                     item.ForeColor = Color.DarkGreen;
                     if (process != null)
                         process.StateBlocked = true;
-
+                    
                     toolBarButtonUnblockOnly.Enabled = true;
                     toolBarButtonBlockOnly.Enabled = false;
                 }
@@ -318,7 +338,7 @@ namespace ProgCop
 
             if (path == null)
             {
-
+                Logger.Write("Block(): Can't find path for the process. Probably an internal Windows process.");
                 new MessageBoxEx("ProgCop Warning", "Can't find path for the process. Probably an internal Windows process.",
                                 MessageBoxExType.Warning).ShowDialog(this);
 
@@ -415,9 +435,7 @@ namespace ProgCop
 
                 if(theRule != null)
                 {
-                    //TODO: Write to system log here
-                    ////TODO: Rule is probably removed via the windows firewall gui, 
-                    //so just remove the listview item and from the blockedprocesslist
+                    Logger.Write("Unblock(): Rule does not exist. Only removing it from the view.");
                     listView1BlockedApplications.Items.Remove(item);
                     pBlockedProcessList.RemoveByProcessName(item.Name);
                     HandleRulesButton();
@@ -432,6 +450,7 @@ namespace ProgCop
                 }
                 else
                 {
+                    Logger.Write("Unblock(): Removing rule " + rule.Name +  " failed");
                     new MessageBoxEx("ProgCop Warning", "Removing rule " + rule.Name + " failed. Please contact support.",
                                         MessageBoxExType.Warning).ShowDialog(this);
                 }
@@ -583,15 +602,20 @@ namespace ProgCop
         private void ContextMenuConnectedItems_Popup(object sender, EventArgs e)
         {
             if (listViewInternetConnectedProcesses.SelectedItems.Count > 0)
-            {
                 menuItemContextBlock.Text = "Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
-            }
         }
 
-        private void MainWindow_Load(object sender, EventArgs e)
+        private bool IsWindowsFirewallEnabled()
         {
-           
-            
+            Type FWManagerType = Type.GetTypeFromProgID("HNetCfg.FwMgr");
+            dynamic FWManager = Activator.CreateInstance(FWManagerType);
+
+            return FWManager.LocalPolicy.CurrentProfile.FirewallEnabled;
+        }
+
+        private void MainWindow_Load(object sender, EventArgs e) 
+        {
+            statusBarPanel1.Text = "Ready";
         }
     }
 }
