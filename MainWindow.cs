@@ -173,11 +173,21 @@ namespace ProgCop
         {
             BlockedProcess process = null;
             bool actionWasBlocking = false;
+            List<int> indexesToRemoveFromView = new List<int>();
 
             foreach(ListViewItem item in listView1BlockedApplications.Items)
             {
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+
+                if(theRule == null)
+                {
+                    //TODO: Write to system log, the rule has been removed (probably) via the windows firewall gui
+                   
+                    indexesToRemoveFromView.Add(item.Index);
+                    continue;
+                }
+
                 process = pBlockedProcessList.GetProcessByName(item.Name);
 
                 if (toolBarButtonRulesEnabled.Pushed)
@@ -215,6 +225,12 @@ namespace ProgCop
                     toolBarButtonUnblockOnly.Enabled = false;
                 }
             }
+
+            foreach (int i in indexesToRemoveFromView)
+            {
+                pBlockedProcessList.RemoveByProcessName(listView1BlockedApplications.Items[i].Name);
+                listView1BlockedApplications.Items.RemoveAt(i);
+            }
        }
 
         private void EnableDisableSelectedRule(bool stateBlocked)
@@ -226,6 +242,15 @@ namespace ProgCop
                 ListViewItem item = listView1BlockedApplications.SelectedItems[0];
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
+
+                if(theRule == null)
+                {
+                    //TODO: ALso this needs system logging
+                    pBlockedProcessList.RemoveByProcessName(item.Name);
+                    listView1BlockedApplications.Items.Remove(item);
+                    return;
+                }
+
                 process = pBlockedProcessList.GetProcessByName(item.Name);
 
                 if(stateBlocked)
@@ -373,22 +398,37 @@ namespace ProgCop
 
         private void Unblock()
         {
+            void HandleRulesButton()
+            {
+                if (toolBarButtonRulesEnabled.Enabled && listView1BlockedApplications.Items.Count == 0)
+                {
+                    toolBarButtonRulesEnabled.Enabled = false;
+                    toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
+                }
+            }
+
             if (listView1BlockedApplications.SelectedItems.Count > 0)
             {
                 ListViewItem item = listView1BlockedApplications.SelectedItems[0];
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
 
+                if(theRule != null)
+                {
+                    //TODO: Write to system log here
+                    ////TODO: Rule is probably removed via the windows firewall gui, 
+                    //so just remove the listview item and from the blockedprocesslist
+                    listView1BlockedApplications.Items.Remove(item);
+                    pBlockedProcessList.RemoveByProcessName(item.Name);
+                    HandleRulesButton();
+                    return;
+                }
+
                 if (FirewallManager.Instance.Rules.Remove(theRule))
                 {
                     pBlockedProcessList.RemoveByProcessName(item.Name);
                     listView1BlockedApplications.Items.Remove(item);
-
-                    if (toolBarButtonRulesEnabled.Enabled && listView1BlockedApplications.Items.Count == 0)
-                    {
-                        toolBarButtonRulesEnabled.Enabled = false;
-                        toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
-                    }
+                    HandleRulesButton();
                 }
                 else
                 {
@@ -420,15 +460,18 @@ namespace ProgCop
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
 
-                if (theRule.IsEnable)
+                if (theRule != null)
                 {
-                    toolBarButtonBlockOnly.Enabled = false;
-                    toolBarButtonUnblockOnly.Enabled = true;
-                }
-                else
-                {
-                    toolBarButtonBlockOnly.Enabled = true;
-                    toolBarButtonUnblockOnly.Enabled = false;
+                    if (theRule.IsEnable)
+                    {
+                        toolBarButtonBlockOnly.Enabled = false;
+                        toolBarButtonUnblockOnly.Enabled = true;
+                    }
+                    else
+                    {
+                        toolBarButtonBlockOnly.Enabled = true;
+                        toolBarButtonUnblockOnly.Enabled = false;
+                    }
                 }
             }
             else
@@ -472,20 +515,23 @@ namespace ProgCop
                 var rule = (IRule)item.Tag;
                 var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
 
-                if (theRule.IsEnable)
+                if (theRule != null)
                 {
-                    menuItemUnblockSelected.Enabled = true;
-                    menuItemUnblockSelected.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
+                    if (theRule.IsEnable)
+                    {
+                        menuItemUnblockSelected.Enabled = true;
+                        menuItemUnblockSelected.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
 
-                    menuItemBlockSelected.Enabled = false;
-                    menuItemBlockSelected.Text = "Block " + listView1BlockedApplications.SelectedItems[0].Text;
-                }
-                else
-                {
-                    menuItemUnblockSelected.Enabled = false;
-                    menuItemBlockSelected.Enabled = true;
-                    menuItemBlockSelected.Text = "Block " + listView1BlockedApplications.SelectedItems[0].Text;
-                    menuItemUnblockSelected.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
+                        menuItemBlockSelected.Enabled = false;
+                        menuItemBlockSelected.Text = "Block " + listView1BlockedApplications.SelectedItems[0].Text;
+                    }
+                    else
+                    {
+                        menuItemUnblockSelected.Enabled = false;
+                        menuItemBlockSelected.Enabled = true;
+                        menuItemBlockSelected.Text = "Block " + listView1BlockedApplications.SelectedItems[0].Text;
+                        menuItemUnblockSelected.Text = "Unblock " + listView1BlockedApplications.SelectedItems[0].Text;
+                    }
                 }
             }
 
@@ -541,6 +587,11 @@ namespace ProgCop
                 menuItemContextBlock.Text = "Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
             }
         }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+           
             
+        }
     }
 }

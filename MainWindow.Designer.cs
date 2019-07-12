@@ -55,7 +55,7 @@
             this.toolBarButton1 = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSettings = new System.Windows.Forms.ToolBarButton();
             this.imageList1Toolbar = new System.Windows.Forms.ImageList(this.components);
-            this.statusBar1 = new System.Windows.Forms.StatusBar();
+            this.statusBarMain = new System.Windows.Forms.StatusBar();
             this.listView1BlockedApplications = new System.Windows.Forms.ListView();
             this.columnHeaderBlockedApplicationName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -258,14 +258,14 @@
             this.imageList1Toolbar.Images.SetKeyName(5, "shield_add.png");
             this.imageList1Toolbar.Images.SetKeyName(6, "shield_delete.png");
             // 
-            // statusBar1
+            // statusBarMain
             // 
-            this.statusBar1.CausesValidation = false;
-            this.statusBar1.Location = new System.Drawing.Point(0, 762);
-            this.statusBar1.Name = "statusBar1";
-            this.statusBar1.Size = new System.Drawing.Size(716, 22);
-            this.statusBar1.TabIndex = 2;
-            this.statusBar1.Text = "Ready";
+            this.statusBarMain.CausesValidation = false;
+            this.statusBarMain.Location = new System.Drawing.Point(0, 762);
+            this.statusBarMain.Name = "statusBarMain";
+            this.statusBarMain.Size = new System.Drawing.Size(716, 22);
+            this.statusBarMain.TabIndex = 2;
+            this.statusBarMain.Text = "Ready";
             // 
             // listView1BlockedApplications
             // 
@@ -423,12 +423,13 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(716, 784);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.statusBar1);
+            this.Controls.Add(this.statusBarMain);
             this.Controls.Add(this.toolBar1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Menu = this.mainMenu1;
             this.Name = "MainWindow";
             this.Text = "ProgCop";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.Shown += new System.EventHandler(this.MainWindow_Shown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -445,7 +446,7 @@
         private System.Windows.Forms.ToolBar toolBar1;
         private System.Windows.Forms.ToolBarButton toolBarButtonAddApplication;
         private System.Windows.Forms.ImageList imageList1Toolbar;
-        private System.Windows.Forms.StatusBar statusBar1;
+        private System.Windows.Forms.StatusBar statusBarMain;
         private System.Windows.Forms.ToolBarButton toolBarButtonAddProg;
         private System.Windows.Forms.ToolBarButton toolBarButtonSeparator;
         private System.Windows.Forms.ListView listView1BlockedApplications;
