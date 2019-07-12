@@ -254,8 +254,8 @@ namespace ProgCop
             }
             else
             {
-                MessageBox.Show(this, "Please select a rule first.",
-                   "ProgCop Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                new MessageBoxEx("ProgCop Information", "Please select a rule first.", 
+                    MessageBoxExType.Information).ShowDialog(this);
             }
         }
 
@@ -293,8 +293,10 @@ namespace ProgCop
 
             if (path == null)
             {
-                MessageBox.Show(this, "Can't find path for the process. Probably an internal Windows process.",
-                    "ProgCop error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                new MessageBoxEx("ProgCop Warning", "Can't find path for the process. Probably an internal Windows process.",
+                                MessageBoxExType.Warning).ShowDialog(this);
+
                 return;
             }
 
@@ -390,8 +392,8 @@ namespace ProgCop
                 }
                 else
                 {
-                    MessageBox.Show("Removing rule " + rule.Name + " failed. Please contact support.", "ProgCop error", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    new MessageBoxEx("ProgCop Warning", "Removing rule " + rule.Name + " failed. Please contact support.",
+                                        MessageBoxExType.Warning).ShowDialog(this);
                 }
             }
         }
