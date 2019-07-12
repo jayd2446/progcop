@@ -58,6 +58,7 @@
             this.statusBarMain = new System.Windows.Forms.StatusBar();
             this.statusBarPanel1 = new System.Windows.Forms.StatusBarPanel();
             this.statusBarPanel2 = new System.Windows.Forms.StatusBarPanel();
+            this.statusBarPanel3 = new System.Windows.Forms.StatusBarPanel();
             this.listView1BlockedApplications = new System.Windows.Forms.ListView();
             this.columnHeaderBlockedApplicationName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderDisplayName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -79,6 +80,7 @@
             this.menuItemContextUnblock = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -269,7 +271,8 @@
             this.statusBarMain.Name = "statusBarMain";
             this.statusBarMain.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
             this.statusBarPanel1,
-            this.statusBarPanel2});
+            this.statusBarPanel2,
+            this.statusBarPanel3});
             this.statusBarMain.ShowPanels = true;
             this.statusBarMain.Size = new System.Drawing.Size(716, 22);
             this.statusBarMain.TabIndex = 2;
@@ -277,14 +280,20 @@
             // 
             // statusBarPanel1
             // 
+            this.statusBarPanel1.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Spring;
             this.statusBarPanel1.Name = "statusBarPanel1";
-            this.statusBarPanel1.Text = "statusBarPanel1";
+            this.statusBarPanel1.Width = 129;
             // 
             // statusBarPanel2
             // 
             this.statusBarPanel2.Name = "statusBarPanel2";
-            this.statusBarPanel2.Text = "statusBarPanel2";
             this.statusBarPanel2.Width = 400;
+            // 
+            // statusBarPanel3
+            // 
+            this.statusBarPanel3.Alignment = System.Windows.Forms.HorizontalAlignment.Right;
+            this.statusBarPanel3.Name = "statusBarPanel3";
+            this.statusBarPanel3.Width = 170;
             // 
             // listView1BlockedApplications
             // 
@@ -452,6 +461,7 @@
             this.Shown += new System.EventHandler(this.MainWindow_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel3)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -510,6 +520,7 @@
         private System.Windows.Forms.MenuItem menuItem3;
         private System.Windows.Forms.StatusBarPanel statusBarPanel1;
         private System.Windows.Forms.StatusBarPanel statusBarPanel2;
+        private System.Windows.Forms.StatusBarPanel statusBarPanel3;
     }
 }
 

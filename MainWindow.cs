@@ -623,6 +623,7 @@ namespace ProgCop
                                         MessageBoxExType.Warning).ShowDialog(this);
                 Application.Exit();
             }
+            statusBarPanel3.Text = FirewallManager.Instance.GetProfile().ToString();
         }
     }
 }
