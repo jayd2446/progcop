@@ -616,6 +616,13 @@ namespace ProgCop
         private void MainWindow_Load(object sender, EventArgs e) 
         {
             statusBarPanel1.Text = "Ready";
+            if (!FirewallManager.Instance.IsSupported)
+            {
+                Logger.Write("Firewall API not supported on this system. Abort.");
+                new MessageBoxEx("ProgCop Warning", "Firewall API not supported on this system. Abort.",
+                                        MessageBoxExType.Warning).ShowDialog(this);
+                Application.Exit();
+            }
         }
     }
 }
