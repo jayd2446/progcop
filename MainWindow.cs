@@ -40,6 +40,8 @@ namespace ProgCop
             toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
             toolBarButtonDelProg.Enabled = false;
 
+            notifyIcon1.Visible = Properties.Settings.Default.ShowInTray;
+
             //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
             //pBlockedProcessNames = new List<string>();
             pBlockedProcessList = new BlockedProcessList();
@@ -649,13 +651,22 @@ namespace ProgCop
         { 
             ResizeAutoSizeColumn(listView1BlockedApplications, 0);
             ResizeAutoSizeColumn(listViewInternetConnectedProcesses, 0);
+
+            if(WindowState == FormWindowState.Minimized)
+            {
+                if (Properties.Settings.Default.MinimizeToTray)
+                {
+                    ShowInTaskbar = false;
+                }
+            }
         }
 
         private void ShowSettingsDialog()
         {
             if(new SettingsDialog().ShowDialog() == DialogResult.OK)
             {
-
+                notifyIcon1.Visible = Properties.Settings.Default.ShowInTray;
+                ShowInTaskbar = true;
             }
         }
 
@@ -667,6 +678,12 @@ namespace ProgCop
         private void MenuItemClose_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void NotifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
         }
     }
 }

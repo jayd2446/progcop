@@ -68,6 +68,7 @@
             this.checkBoxShowInTray.TabIndex = 2;
             this.checkBoxShowInTray.Text = "Show in system tray";
             this.checkBoxShowInTray.UseVisualStyleBackColor = true;
+            this.checkBoxShowInTray.CheckedChanged += new System.EventHandler(this.CheckBoxShowInTray_CheckedChanged);
             // 
             // checkboxMinToTray
             // 

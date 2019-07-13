@@ -81,6 +81,7 @@
             this.menuItemContextOpenFileLocation = new System.Windows.Forms.MenuItem();
             this.contextMenuBlockedApplications = new System.Windows.Forms.ContextMenu();
             this.menuItemContextUnblock = new System.Windows.Forms.MenuItem();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel3)).BeginInit();
@@ -468,6 +469,13 @@
             this.menuItemContextUnblock.Text = "Remove";
             this.menuItemContextUnblock.Click += new System.EventHandler(this.MenuItemContextUnblock_Click);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "ProgCop";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseDoubleClick);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -549,6 +557,7 @@
         private System.Windows.Forms.MenuItem menuItemSettings;
         private System.Windows.Forms.MenuItem menuItem7;
         private System.Windows.Forms.MenuItem menuItemClose;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 

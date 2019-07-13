@@ -14,6 +14,8 @@ namespace ProgCop
             checkBoxipv6.Checked = Properties.Settings.Default.UseIPV6;
             checkboxMinToTray.Checked = Properties.Settings.Default.MinimizeToTray;
             checkBoxShowInTray.Checked = Properties.Settings.Default.ShowInTray;
+
+            HandleMinToTrayCheckbox();
         }
 
         private void ButtonOK_Click(object sender, EventArgs e)
@@ -25,6 +27,26 @@ namespace ProgCop
             Properties.Settings.Default.Save();
             
             DialogResult = DialogResult.OK;
+        }
+
+        private void HandleMinToTrayCheckbox()
+        {
+            if (!checkBoxShowInTray.Checked)
+            {
+                checkboxMinToTray.Checked = false;
+                checkboxMinToTray.Enabled = false;
+            }
+            else
+            {
+                checkboxMinToTray.Enabled = true;
+                checkboxMinToTray.Checked = Properties.Settings.Default.MinimizeToTray;
+
+            }
+        }
+
+        private void CheckBoxShowInTray_CheckedChanged(object sender, EventArgs e)
+        {
+            HandleMinToTrayCheckbox();
         }
     }
 }
