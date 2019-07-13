@@ -20,7 +20,7 @@ namespace ProgCop
             this.Text = title;
 
             //Setting maximum size will allow label to wrap text no multiple lines.
-            this.labelText.MaximumSize = new Size(250, 0);
+            this.labelText.MaximumSize = new Size(220, 0);
             this.labelText.AutoSize = true;
             this.labelText.Text = text;
             

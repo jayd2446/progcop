@@ -201,7 +201,7 @@ namespace ProgCop
     {
         //IPv4
         //TODO: Add support for IPv6 later
-        private const int AF_INET = 2;
+        private int AF_INET = 2;
 
         [DllImport("iphlpapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int pdwSize, bool bOrder, 
@@ -210,6 +210,18 @@ namespace ProgCop
         [DllImport("iphlpapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern uint GetExtendedUdpTable(IntPtr pUdpTable, ref int pdwSize, bool bOrder, 
                                                                          int ulAf, UdpTableClass tableClass, uint reserved = 0);
+
+        internal ConnectedProcessesLookup()
+        {
+            if(Properties.Settings.Default.UseIPV6)
+            {
+                AF_INET = 23;
+            }
+            else
+            {
+                AF_INET = 2;
+            }
+        }
 
         internal List<TcpProcessRecord> LookupForTcpConnectedProcesses()
         {

@@ -177,6 +177,7 @@ namespace ProgCop
                     Unblock();
                     break;
                 case "toolBarButtonSettings":
+                    ShowSettingsDialog();
                     break;
                 case "toolBarButtonRulesEnabled":
                     EnableDisableRules();
@@ -648,6 +649,24 @@ namespace ProgCop
         { 
             ResizeAutoSizeColumn(listView1BlockedApplications, 0);
             ResizeAutoSizeColumn(listViewInternetConnectedProcesses, 0);
+        }
+
+        private void ShowSettingsDialog()
+        {
+            if(new SettingsDialog().ShowDialog() == DialogResult.OK)
+            {
+
+            }
+        }
+
+        private void MenuItemSettings_Click(object sender, EventArgs e)
+        {
+            ShowSettingsDialog();
+        }
+
+        private void MenuItemClose_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

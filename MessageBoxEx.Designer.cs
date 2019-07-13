@@ -76,11 +76,11 @@
             // 
             // MessageBoxEx
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.buttonOK;
-            this.ClientSize = new System.Drawing.Size(352, 166);
+            this.ClientSize = new System.Drawing.Size(355, 166);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.labelText);
             this.Controls.Add(this.pictureBoxTypeIcon);

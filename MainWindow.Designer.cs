@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItemSettings = new System.Windows.Forms.MenuItem();
+            this.menuItem7 = new System.Windows.Forms.MenuItem();
+            this.menuItemClose = new System.Windows.Forms.MenuItem();
             this.menuItemEditMenu = new System.Windows.Forms.MenuItem();
             this.menuItemAddProg = new System.Windows.Forms.MenuItem();
             this.menuItem5 = new System.Windows.Forms.MenuItem();
@@ -97,7 +100,28 @@
             // menuItem1
             // 
             this.menuItem1.Index = 0;
+            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemSettings,
+            this.menuItem7,
+            this.menuItemClose});
             this.menuItem1.Text = "File";
+            // 
+            // menuItemSettings
+            // 
+            this.menuItemSettings.Index = 0;
+            this.menuItemSettings.Text = "Settings...";
+            this.menuItemSettings.Click += new System.EventHandler(this.MenuItemSettings_Click);
+            // 
+            // menuItem7
+            // 
+            this.menuItem7.Index = 1;
+            this.menuItem7.Text = "-";
+            // 
+            // menuItemClose
+            // 
+            this.menuItemClose.Index = 2;
+            this.menuItemClose.Text = "Close ProgCop";
+            this.menuItemClose.Click += new System.EventHandler(this.MenuItemClose_Click);
             // 
             // menuItemEditMenu
             // 
@@ -522,6 +546,9 @@
         private System.Windows.Forms.StatusBarPanel statusBarPanel1;
         private System.Windows.Forms.StatusBarPanel statusBarPanel2;
         private System.Windows.Forms.StatusBarPanel statusBarPanel3;
+        private System.Windows.Forms.MenuItem menuItemSettings;
+        private System.Windows.Forms.MenuItem menuItem7;
+        private System.Windows.Forms.MenuItem menuItemClose;
     }
 }
 
