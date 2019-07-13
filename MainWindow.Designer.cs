@@ -47,7 +47,6 @@
             this.menuItemEnableDisableAll = new System.Windows.Forms.MenuItem();
             this.menuItemHelpMenu = new System.Windows.Forms.MenuItem();
             this.menuItemAbout = new System.Windows.Forms.MenuItem();
-            this.menuItemLicense = new System.Windows.Forms.MenuItem();
             this.toolBar1 = new System.Windows.Forms.ToolBar();
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
@@ -195,19 +194,13 @@
             // 
             this.menuItemHelpMenu.Index = 2;
             this.menuItemHelpMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemAbout,
-            this.menuItemLicense});
+            this.menuItemAbout});
             this.menuItemHelpMenu.Text = "Help";
             // 
             // menuItemAbout
             // 
             this.menuItemAbout.Index = 0;
             this.menuItemAbout.Text = "About";
-            // 
-            // menuItemLicense
-            // 
-            this.menuItemLicense.Index = 1;
-            this.menuItemLicense.Text = "License...";
             // 
             // toolBar1
             // 
@@ -540,7 +533,6 @@
         private System.Windows.Forms.MenuItem menuItemUnBlock;
         private System.Windows.Forms.MenuItem menuItemHelpMenu;
         private System.Windows.Forms.MenuItem menuItemAbout;
-        private System.Windows.Forms.MenuItem menuItemLicense;
         private System.Windows.Forms.ColumnHeader columnHeaderDisplayName;
         private System.Windows.Forms.ToolBarButton toolBarButtonRulesEnabled;
         private System.Windows.Forms.MenuItem menuItem2;
