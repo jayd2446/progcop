@@ -145,6 +145,7 @@ namespace ProgCop
 
                 listViewInternetConnectedProcesses.Sorting = SortOrder.Ascending;
                 listViewInternetConnectedProcesses.Sort();
+
             };
 
             worker.RunWorkerAsync();
@@ -610,6 +611,8 @@ namespace ProgCop
             Type FWManagerType = Type.GetTypeFromProgID("HNetCfg.FwMgr");
             dynamic FWManager = Activator.CreateInstance(FWManagerType);
 
+            
+
             return FWManager.LocalPolicy.CurrentProfile.FirewallEnabled;
         }
 
@@ -623,7 +626,28 @@ namespace ProgCop
                                         MessageBoxExType.Warning).ShowDialog(this);
                 Application.Exit();
             }
+
             statusBarPanel3.Text = FirewallManager.Instance.GetProfile().ToString();
+        }
+
+        private void ResizeAutoSizeColumn(ListView listView, int autoSizeColumnIndex)
+        {
+            int otherColumnsWidth = 0;
+
+            foreach (ColumnHeader header in listView.Columns)
+                if (header.Index != autoSizeColumnIndex)
+                    otherColumnsWidth += header.Width;
+
+            int autoSizeColumnWidth = listView.ClientRectangle.Width - otherColumnsWidth;
+
+            if (listView.Columns[autoSizeColumnIndex].Width != autoSizeColumnWidth)
+                listView.Columns[autoSizeColumnIndex].Width = autoSizeColumnWidth;
+        }
+
+        private void MainWindow_Resize(object sender, EventArgs e)
+        { 
+            ResizeAutoSizeColumn(listView1BlockedApplications, 0);
+            ResizeAutoSizeColumn(listViewInternetConnectedProcesses, 0);
         }
     }
 }

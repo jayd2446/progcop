@@ -459,6 +459,7 @@
             this.Text = "ProgCop";
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.Shown += new System.EventHandler(this.MainWindow_Shown);
+            this.Resize += new System.EventHandler(this.MainWindow_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.statusBarPanel3)).EndInit();
