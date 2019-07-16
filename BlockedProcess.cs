@@ -16,7 +16,7 @@ namespace ProgCop
         internal string ProcessPath { get; }
 
         bool IEquatable<BlockedProcess>.Equals(BlockedProcess other)
-        {
+        { 
             if (ProcessPath.Equals(other.ProcessPath))
                 return true;
 

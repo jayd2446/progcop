@@ -199,9 +199,7 @@ namespace ProgCop
 
     internal class ConnectedProcessesLookup
     {
-        //IPv4
-        //TODO: Add support for IPv6 later
-        private int AF_INET = 2;
+        private int AF_INET;
 
         [DllImport("iphlpapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int pdwSize, bool bOrder, 
