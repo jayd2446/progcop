@@ -439,24 +439,27 @@ namespace ProgCop
 
                 if(theRule != null)
                 {
-                    Logger.Write("Unblock(): Rule does not exist. Only removing it from the view.");
-                    listView1BlockedApplications.Items.Remove(item);
-                    pBlockedProcessList.RemoveByProcessName(item.Name);
-                    HandleRulesButton();
-                    return;
-                }
+                    if (FirewallManager.Instance.Rules.Remove(theRule))
+                    {
+                        pBlockedProcessList.RemoveByProcessName(item.Name);
+                        listView1BlockedApplications.Items.Remove(item);
+                        HandleRulesButton();
+                    }
+                    else
+                    {
+                        Logger.Write("Unblock(): Removing rule " + rule.Name + " failed");
+                        new MessageBoxEx("ProgCop Warning", "Removing rule " + rule.Name + " failed. Please contact support.",
+                                            MessageBoxExType.Warning).ShowDialog(this);
+                    }
 
-                if (FirewallManager.Instance.Rules.Remove(theRule))
-                {
-                    pBlockedProcessList.RemoveByProcessName(item.Name);
-                    listView1BlockedApplications.Items.Remove(item);
-                    HandleRulesButton();
+                    return;
                 }
                 else
                 {
-                    Logger.Write("Unblock(): Removing rule " + rule.Name +  " failed");
-                    new MessageBoxEx("ProgCop Warning", "Removing rule " + rule.Name + " failed. Please contact support.",
-                                        MessageBoxExType.Warning).ShowDialog(this);
+                    Logger.Write("Unblock(): Rule does not exist. Only removing it from the view.");
+                    pBlockedProcessList.RemoveByProcessName(item.Name);
+                    listView1BlockedApplications.Items.Remove(item);
+                    HandleRulesButton();
                 }
             }
         }
