@@ -45,6 +45,7 @@ namespace ProgCop
             //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
             //pBlockedProcessNames = new List<string>();
             pBlockedProcessList = new BlockedProcessList();
+            pBlockedProcessList.Load();
 
             toolBarButtonUnblockOnly.Enabled = false;
             toolBarButtonBlockOnly.Enabled = false;
@@ -349,7 +350,7 @@ namespace ProgCop
                 return;
             }
 
-            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
+            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallProfiles.Domain | FirewallProfiles.Private | FirewallProfiles.Public,
                                                                       @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
                                                                       FirewallAction.Block, path); ;
             rule.Direction = FirewallDirection.Outbound;
@@ -378,7 +379,7 @@ namespace ProgCop
 
         private void Block(string path)
         {
-            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallManager.Instance.GetProfile().Type,
+            var rule = FirewallManager.Instance.CreateApplicationRule(FirewallProfiles.Domain | FirewallProfiles.Private | FirewallProfiles.Public,
                                                                       @"ProgCop Rule " + Guid.NewGuid().ToString("B"),
                                                                       FirewallAction.Block, path); ;
             rule.Direction = FirewallDirection.Outbound;
@@ -686,7 +687,7 @@ namespace ProgCop
         private void NotifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             WindowState = FormWindowState.Normal;
-            ShowInTaskbar = true;
+            ShowInTaskbar = true; 
         }
     }
 }

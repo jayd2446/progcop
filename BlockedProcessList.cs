@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using WindowsFirewallHelper;
+using WindowsFirewallHelper.FirewallAPIv2.Rules;
+
 namespace ProgCop
 {
     internal class BlockedProcessList : IEnumerable<BlockedProcess>
@@ -10,6 +13,17 @@ namespace ProgCop
         internal BlockedProcessList()
         {
             pProcesses = new List<BlockedProcess>();
+        }
+
+        internal void Load()
+        {
+            
+        }
+
+        internal bool Save()
+        {
+
+            return true;
         }
 
         internal void Add(BlockedProcess process)
