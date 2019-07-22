@@ -43,15 +43,12 @@
             this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.menuItemBlockSelected = new System.Windows.Forms.MenuItem();
             this.menuItemUnblockSelected = new System.Windows.Forms.MenuItem();
-            this.menuItem3 = new System.Windows.Forms.MenuItem();
-            this.menuItemEnableDisableAll = new System.Windows.Forms.MenuItem();
             this.menuItemHelpMenu = new System.Windows.Forms.MenuItem();
             this.menuItemAbout = new System.Windows.Forms.MenuItem();
             this.toolBar1 = new System.Windows.Forms.ToolBar();
             this.toolBarButtonAddProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonDelProg = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonSeparator = new System.Windows.Forms.ToolBarButton();
-            this.toolBarButtonRulesEnabled = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonBlockOnly = new System.Windows.Forms.ToolBarButton();
             this.toolBarButtonUnblockOnly = new System.Windows.Forms.ToolBarButton();
             this.toolBarButton1 = new System.Windows.Forms.ToolBarButton();
@@ -133,9 +130,7 @@
             this.menuItemUnBlock,
             this.menuItem2,
             this.menuItemBlockSelected,
-            this.menuItemUnblockSelected,
-            this.menuItem3,
-            this.menuItemEnableDisableAll});
+            this.menuItemUnblockSelected});
             this.menuItemEditMenu.Text = "Rules";
             this.menuItemEditMenu.Popup += new System.EventHandler(this.MenuItemEditMenu_Popup);
             // 
@@ -179,17 +174,6 @@
             this.menuItemUnblockSelected.Text = "Unblock";
             this.menuItemUnblockSelected.Click += new System.EventHandler(this.MenuItemUnblockSelected_Click);
             // 
-            // menuItem3
-            // 
-            this.menuItem3.Index = 7;
-            this.menuItem3.Text = "-";
-            // 
-            // menuItemEnableDisableAll
-            // 
-            this.menuItemEnableDisableAll.Index = 8;
-            this.menuItemEnableDisableAll.Text = "Enable All";
-            this.menuItemEnableDisableAll.Click += new System.EventHandler(this.MenuItemEnableDisableAll_Click);
-            // 
             // menuItemHelpMenu
             // 
             this.menuItemHelpMenu.Index = 2;
@@ -201,6 +185,7 @@
             // 
             this.menuItemAbout.Index = 0;
             this.menuItemAbout.Text = "About";
+            this.menuItemAbout.Click += new System.EventHandler(this.MenuItemAbout_Click);
             // 
             // toolBar1
             // 
@@ -208,7 +193,6 @@
             this.toolBarButtonAddProg,
             this.toolBarButtonDelProg,
             this.toolBarButtonSeparator,
-            this.toolBarButtonRulesEnabled,
             this.toolBarButtonBlockOnly,
             this.toolBarButtonUnblockOnly,
             this.toolBarButton1,
@@ -239,13 +223,6 @@
             // 
             this.toolBarButtonSeparator.Name = "toolBarButtonSeparator";
             this.toolBarButtonSeparator.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
-            // 
-            // toolBarButtonRulesEnabled
-            // 
-            this.toolBarButtonRulesEnabled.ImageIndex = 3;
-            this.toolBarButtonRulesEnabled.Name = "toolBarButtonRulesEnabled";
-            this.toolBarButtonRulesEnabled.Style = System.Windows.Forms.ToolBarButtonStyle.ToggleButton;
-            this.toolBarButtonRulesEnabled.ToolTipText = "Block/unblock all";
             // 
             // toolBarButtonBlockOnly
             // 
@@ -501,7 +478,7 @@
         private System.Windows.Forms.MainMenu mainMenu1;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.ToolBar toolBar1;
-        private System.Windows.Forms.ToolBarButton toolBarButtonAddApplication;
+        //private System.Windows.Forms.ToolBarButton toolBarButtonAddApplication;
         private System.Windows.Forms.ImageList imageList1Toolbar;
         private System.Windows.Forms.StatusBar statusBarMain;
         private System.Windows.Forms.ToolBarButton toolBarButtonAddProg;
@@ -534,15 +511,12 @@
         private System.Windows.Forms.MenuItem menuItemHelpMenu;
         private System.Windows.Forms.MenuItem menuItemAbout;
         private System.Windows.Forms.ColumnHeader columnHeaderDisplayName;
-        private System.Windows.Forms.ToolBarButton toolBarButtonRulesEnabled;
         private System.Windows.Forms.MenuItem menuItem2;
-        private System.Windows.Forms.MenuItem menuItemEnableDisableAll;
         private System.Windows.Forms.ToolBarButton toolBarButtonBlockOnly;
         private System.Windows.Forms.ToolBarButton toolBarButtonUnblockOnly;
         private System.Windows.Forms.ToolBarButton toolBarButton1;
         private System.Windows.Forms.MenuItem menuItemBlockSelected;
         private System.Windows.Forms.MenuItem menuItemUnblockSelected;
-        private System.Windows.Forms.MenuItem menuItem3;
         private System.Windows.Forms.StatusBarPanel statusBarPanel1;
         private System.Windows.Forms.StatusBarPanel statusBarPanel2;
         private System.Windows.Forms.StatusBarPanel statusBarPanel3;

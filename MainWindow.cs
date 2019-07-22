@@ -36,34 +36,16 @@ namespace ProgCop
             
             SetWindowTheme(listView1BlockedApplications.Handle, "explorer", null);
 
-            toolBarButtonRulesEnabled.Pushed = true;
-            toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
+          
             toolBarButtonDelProg.Enabled = false;
 
             notifyIcon1.Visible = Properties.Settings.Default.ShowInTray;
 
-            //TODO: In the future we need to load these from somewhere as well as blocked apps too etc.
-            //pBlockedProcessNames = new List<string>();
             pBlockedProcessList = new BlockedProcessList();
-            pBlockedProcessList.Load();
+            pBlockedProcessList.Load(listView1BlockedApplications);
 
             toolBarButtonUnblockOnly.Enabled = false;
             toolBarButtonBlockOnly.Enabled = false;
-
-            if (listView1BlockedApplications.Items.Count > 0)
-            {
-                //TODO: Get the saved button state in here. We need to set the state in here in order to
-                //disabled state grayed out thing to work. Setting pushed=true will enable colors for the button even
-                //it is disabled.
-                toolBarButtonRulesEnabled.Pushed = true;
-                EnableDisableRules();
-                toolBarButtonRulesEnabled.Enabled = true;
-            }
-            else
-            {
-                toolBarButtonRulesEnabled.Enabled = false;
-                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
-            }
 
             pTimer = new System.Windows.Forms.Timer();
             pTimerStatus = new System.Windows.Forms.Timer();
@@ -182,9 +164,6 @@ namespace ProgCop
                 case "toolBarButtonSettings":
                     ShowSettingsDialog();
                     break;
-                case "toolBarButtonRulesEnabled":
-                    EnableDisableRules();
-                    break;
                 case "toolBarButtonUnblockOnly":
                     EnableDisableSelectedRule(false);
                     break;
@@ -193,70 +172,6 @@ namespace ProgCop
                     break;
             }
         }
-
-        private void EnableDisableRules()
-        {
-            BlockedProcess process = null;
-            bool actionWasBlocking = false;
-            List<int> indexesToRemoveFromView = new List<int>();
-
-            foreach(ListViewItem item in listView1BlockedApplications.Items)
-            {
-                var rule = (IRule)item.Tag;
-                var theRule = FirewallManager.Instance.Rules.SingleOrDefault(r => r.Name == rule.Name);
-
-                if(theRule == null)
-                {
-                    Logger.Write("EnableDisableRules(): rule does not exist. Only removing it from the view.");
-
-                    indexesToRemoveFromView.Add(item.Index);
-                    continue;
-                }
-
-                process = pBlockedProcessList.GetProcessByName(item.Name);
-
-                if (toolBarButtonRulesEnabled.Pushed)
-                {
-                    theRule.IsEnable = true;
-                    item.SubItems[2].Text = "BLOCKED";
-                    item.ForeColor = Color.DarkGreen;
-                    if (process != null)
-                        process.StateBlocked = true;
-
-                    actionWasBlocking = true;
-                }
-                else
-                {
-                    theRule.IsEnable = false;
-                    item.SubItems[2].Text = "UNBLOCKED";
-                    item.ForeColor = Color.Red;
-                    if (process != null)
-                        process.StateBlocked = false;
-
-                    actionWasBlocking = false;
-                }
-            }
-
-            if(listView1BlockedApplications.SelectedItems.Count > 0)
-            {
-                if(actionWasBlocking)
-                {
-                    toolBarButtonBlockOnly.Enabled = false;
-                    toolBarButtonUnblockOnly.Enabled = true;
-                }
-                else
-                {
-                    toolBarButtonBlockOnly.Enabled = true;
-                    toolBarButtonUnblockOnly.Enabled = false;
-                }
-            }
-
-            foreach (int i in indexesToRemoveFromView)
-            {
-                pBlockedProcessList.RemoveByProcessName(listView1BlockedApplications.Items[i].Name);
-                listView1BlockedApplications.Items.RemoveAt(i);
-            }
-       }
 
         private void EnableDisableSelectedRule(bool stateBlocked)
         {
@@ -367,11 +282,7 @@ namespace ProgCop
             itemNew.ForeColor = Color.Green;
             listView1BlockedApplications.Items.Add(itemNew);
 
-            if(!toolBarButtonRulesEnabled.Enabled)
-            {
-                toolBarButtonRulesEnabled.Enabled = true;
-                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
-            }
+         
 
             if (!pBlockedProcessList.ContainsProcessNamed(processName))
                 pBlockedProcessList.Add(new BlockedProcess(path, processName, true));
@@ -395,11 +306,6 @@ namespace ProgCop
             itemNew.ForeColor = Color.Green;
             listView1BlockedApplications.Items.Add(itemNew);
 
-            if (!toolBarButtonRulesEnabled.Enabled)
-            {
-                toolBarButtonRulesEnabled.Enabled = true;
-                toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Normal;
-            }
 
             if (!pBlockedProcessList.ContainsProcessNamed(processName))
                 pBlockedProcessList.Add(new BlockedProcess(path, processName, true));
@@ -423,15 +329,6 @@ namespace ProgCop
 
         private void Unblock()
         {
-            void HandleRulesButton()
-            {
-                if (toolBarButtonRulesEnabled.Enabled && listView1BlockedApplications.Items.Count == 0)
-                {
-                    toolBarButtonRulesEnabled.Enabled = false;
-                    toolBarButtonRulesEnabled.ImageIndex = (int)ShieldButtonImageColor.Gray;
-                }
-            }
-
             if (listView1BlockedApplications.SelectedItems.Count > 0)
             {
                 ListViewItem item = listView1BlockedApplications.SelectedItems[0];
@@ -444,7 +341,6 @@ namespace ProgCop
                     {
                         pBlockedProcessList.RemoveByProcessName(item.Name);
                         listView1BlockedApplications.Items.Remove(item);
-                        HandleRulesButton();
                     }
                     else
                     {
@@ -460,7 +356,6 @@ namespace ProgCop
                     Logger.Write("Unblock(): Rule does not exist. Only removing it from the view.");
                     pBlockedProcessList.RemoveByProcessName(item.Name);
                     listView1BlockedApplications.Items.Remove(item);
-                    HandleRulesButton();
                 }
             }
         }
@@ -573,29 +468,9 @@ namespace ProgCop
                 menuItemBlock.Text = "Add " + listViewInternetConnectedProcesses.SelectedItems[0].Text;
             }
 
-            menuItemEnableDisableAll.Checked = toolBarButtonRulesEnabled.Pushed;
-            menuItemEnableDisableAll.Enabled = toolBarButtonRulesEnabled.Enabled;
-            if (menuItemEnableDisableAll.Checked)
-                menuItemEnableDisableAll.Text = "Unblock All";
-            else
-                menuItemEnableDisableAll.Text = "Block All";
+          
         }
 
-        private void MenuItemEnableDisableAll_Click(object sender, EventArgs e)
-        {
-            if(menuItemEnableDisableAll.Checked)
-            {
-                menuItemEnableDisableAll.Checked = false;
-                toolBarButtonRulesEnabled.Pushed = false;
-                EnableDisableRules();
-            }
-            else
-            {
-                menuItemEnableDisableAll.Checked = true;
-                toolBarButtonRulesEnabled.Pushed = true;
-                EnableDisableRules();
-            }
-        }
 
         private void MenuItemBlockSelected_Click(object sender, EventArgs e)
         {
@@ -688,6 +563,11 @@ namespace ProgCop
         {
             WindowState = FormWindowState.Normal;
             ShowInTaskbar = true; 
+        }
+
+        private void MenuItemAbout_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().ShowDialog();
         }
     }
 }

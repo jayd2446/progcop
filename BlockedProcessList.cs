@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using WindowsFirewallHelper;
 using WindowsFirewallHelper.FirewallAPIv2.Rules;
 
@@ -15,9 +16,38 @@ namespace ProgCop
             pProcesses = new List<BlockedProcess>();
         }
 
-        internal void Load()
+        internal void Load(ListView blockedProcessListview)
         {
-            
+            var rules = WindowsFirewallHelper.FirewallManager.Instance.Rules;
+
+            foreach (var r in rules)
+            {
+                StandardRule sr = (StandardRule)r;
+                if(sr.Name.StartsWith("ProgCop"))
+                {
+                    string name = System.IO.Path.GetFileNameWithoutExtension(sr.ApplicationName);
+                    pProcesses.Add(new BlockedProcess(sr.ApplicationName, name, sr.IsEnable));
+
+                    string blocked = "";
+
+                    if (sr.IsEnable)
+                        blocked = "BLOCKED";
+                    else
+                        blocked = "UNBLOCKED";
+
+                    ListViewItem itemNew = new ListViewItem(new string[] { sr.ApplicationName, name, blocked });
+                    itemNew.Tag = sr;
+
+                    //We use this in unblock to be able to remove item from blocked list
+                    itemNew.Name = name;
+                    if (sr.IsEnable)
+                        itemNew.ForeColor = System.Drawing.Color.Green;
+                    else
+                        itemNew.ForeColor = System.Drawing.Color.Red;
+
+                    blockedProcessListview.Items.Add(itemNew);
+                }
+            }
         }
 
         internal bool Save()
