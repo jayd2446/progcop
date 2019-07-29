@@ -23,7 +23,7 @@ namespace ProgCop
             foreach (var r in rules)
             {
                 StandardRule sr = (StandardRule)r;
-                if(sr.Name.StartsWith("ProgCop"))
+                if (sr.Name.StartsWith("ProgCop"))
                 {
                     string name = System.IO.Path.GetFileNameWithoutExtension(sr.ApplicationName);
                     pProcesses.Add(new BlockedProcess(sr.ApplicationName, name, sr.IsEnable));
@@ -48,12 +48,6 @@ namespace ProgCop
                     blockedProcessListview.Items.Add(itemNew);
                 }
             }
-        }
-
-        internal bool Save()
-        {
-
-            return true;
         }
 
         internal void Add(BlockedProcess process)
